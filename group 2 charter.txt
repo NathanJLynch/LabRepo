@@ -1,0 +1,46 @@
+﻿Group- Innovation and Beyond
+* -Availability for meeting expectations
+   * At least once per week, Meeting in the late afternoon, as most of us will be available at this time
+   * Multiple people meeting at once, do not split up the group too much
+* -Response time to communication expectations
+* *  
+   * At least the same day, we should all be checking whichever messaging app we choose to use. Preferably 12 hour response time to questions about meetings or sprints.
+
+
+* -Definition of done: when is a task complete? (hint: "I'm done with that but I didn't check it into github" is not done.)
+
+
+   * A task is done once a working version of the implementation is done, and the code is pushed into a branch, and requested for review from at least 2 members on github.
+* 
+
+-Scrum meeting format/frequency and distribution of documentation tasks (meeting minutes, updating task board)
+
+
+   * At minimum one meeting per week, meetings should usually last a minimum of 30 minutes. Where we go over user stories, implementations, and problems we run into. We can work together after this meeting, but after we record the tasks we finished, how long the meeting lasted, and who was at the meeting. 
+* 
+
+-Procedure for adopting policies (e.g. code style, code check-in steps, documentation updates)
+if you adopt such a policy during the initial meeting, put it here
+
+
+   * Our procedure for adopting policy will be if more than half of the members agree on an issue, like documentation, code styles and check-in steps.
+
+
+
+
+-Procedure for handling a member who is not meeting expectations
+must include at least 3 actions before involving the instructor
+
+
+   * When a team member is not meeting expectations, we will firstly have two members talk to them about how they should start putting in the effort, or see if something is holding them back.
+   * Action 2 will be a group meeting, where we talk to them about what's happening with why they cant meet these expectations
+*    * Action 3 will be a final warning to the group member, and if they proceed not to do so they will be reported to the professor
+
+
+
+
+Signatures: each member must sign their name by typing their name at the bottom of the document.
+Henok Ketema
+Connell Adams
+Alex Miller
+Nathan Lynch
