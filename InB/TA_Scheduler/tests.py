@@ -37,6 +37,75 @@ class TestAccountCreation(TestCase):
         assert result.success == True
 
 
+# Course Creation Tests
+class TestCourseValidation(TestCase):
+
+    def setup_method(self):
+        # Reusable data for tests
+        self.valid_course_details = {
+            "course_id" : "CS101",
+            "teacher": "Micheal Long",
+            "ta": "Jeffery Thomas"
+        }
+
+        def test_login_success(self):
+            # Test successful login with valid credentials
+            result = self.user.TestCourseValidation(self.valid_course_details)
+            assert result.success == True
 
 
+        def test_duplicate_course_id(self):
+            result = self.user.TestCourseValidation(self.valid_course_details)
+            result2 = self.user.TestCourseValidation(self.valid_course_details)
+            # Assert validation fails for duplicate CourseID
+            assert result2.success == False
+            assert result.error ("Expected validation to fail for invalid teacher assignment, but it passed.")
 
+    def test_invalid_teacher_assignment(self):
+        # Setup: Create a course with an invalid teacher ID
+        self.invalid_course_detailsT = {
+            "course_id": "CS101",
+            "teacher": "M",
+            "ta": "Jeffery Thomas"
+        }
+        result = self.user.TestCourseValidation(self.invalid_course_detailsT)
+        # Assert validation fails for invalid teacher assignment
+        assert result.success == False
+        assert result.error("Expected validation to fail for invalid teacher assignment, but it passed.")
+
+    def test_invalid_ta_assignment(self):
+        # Setup: Create a course with an invalid TA ID
+        self.invalid_course_detailsTA = {
+            "course_id": "CS101",
+            "teacher": "Micheal Long",
+            "ta": " J"
+        }
+        result = self.user.TestCourseValidation(self.invalid_course_detailsTA)
+
+        # Assert validation fails for invalid TA assignment
+        assert result.success == False
+        assert result.error("Expected validation to fail for invalid teacher assignment, but it passed.")
+
+    def test_missing_course_id(self):
+        # Setup: Create a course with a missing CourseID
+        self.invalid_course_detailsCI = {
+            "course_id": "CS101",
+            "teacher": "",
+            "ta": "Jeffery Thomas"
+        }
+        result = self.user.TestCourseValidation(self.invalid_course_detailsCI)
+
+        # Assert validation fails for missing CourseID
+        assert result.success == False
+        assert result.error("Expected validation to fail for invalid teacher assignment, but it passed.")
+
+
+# Course Deletion Tests
+class TestCourseDeletion(TestCase):
+    def setup_method(self):
+        # Reusable data for tests
+        self.valid_course_details = {
+            "course_id": "CS101",
+            "teacher": "Micheal Long",
+            "ta": "Jeffery Thomas"
+        }
