@@ -37,6 +37,7 @@ class TestAccountCreation(TestCase):
         assert result.success == True
 
 
+# Course Creation Tests
 class TestCourseValidation(TestCase):
 
     def setup_method(self):
