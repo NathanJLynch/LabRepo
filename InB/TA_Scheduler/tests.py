@@ -36,6 +36,7 @@ class TestAccountCreation(TestCase):
         result = self.user.emailsent('Paul@uwm.edu')
         assert result.success == True
 
+
 # Course Creation Tests
 class TestCourseValidation(TestCase):
 
