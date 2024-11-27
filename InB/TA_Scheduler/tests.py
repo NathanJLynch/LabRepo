@@ -100,4 +100,12 @@ class TestCourseValidation(TestCase):
         assert result.error("Expected validation to fail for invalid teacher assignment, but it passed.")
 
 
-
+# Course Deletion Tests
+class TestCourseDeletion(TestCase):
+    def setup_method(self):
+        # Reusable data for tests
+        self.valid_course_details = {
+            "course_id": "CS101",
+            "teacher": "Micheal Long",
+            "ta": "Jeffery Thomas"
+        }
