@@ -21,6 +21,11 @@ class Section(models.Model):
         self.section_type = section_type
         self.save()
 
+    def change_SectionType(self, section_type):
+        self.section_type = section_type
+        self.save()
+        return True
+
 class Course(models.Model):
     course_id = models.IntegerField(primary_key=True)
     course_name = models.CharField(max_length=15)
@@ -37,6 +42,16 @@ class Course(models.Model):
         self.save()
         return True
 
+    def remove_Section(self, section):
+        self.section_list.remove(section)
+        self.save()
+        return True
+
+    def change_CourseName(self, course_name):
+        self.course_name = course_name
+        self.save()
+        return True
+
 class CourseList(models.Model):
     course_list = models.ManyToManyField(Course)
 
@@ -46,6 +61,11 @@ class CourseList(models.Model):
 
     def add_Course(self, course):
         self.course_list.append(course)
+        self.save()
+        return True
+
+    def remove_Course(self, course):
+        self.course_list.remove(course)
         self.save()
         return True
 
@@ -69,6 +89,11 @@ class RoleList(models.Model):
 
     def add_Role(self, role):
         self.role_list.append(role)
+        self.save()
+        return True
+
+    def remove_Role(self, role):
+        self.role_list.remove(role)
         self.save()
         return True
 
@@ -118,14 +143,20 @@ class User(models.Model):
         self.is_active = not self.is_active
         self.save()
         return self.is_active
-    
+
 class UserList(models.Model):
     user_list = models.ManyToManyField(User)
     def __init__(self):
         self.user_list = []
         self.save()
-        
+
     def add_User(self, user):
         self.user_list.append(user)
         self.save()
         return True
+
+    def remove_User(self, user):
+        self.user_list.remove(user)
+        self.save()
+        return True
+
