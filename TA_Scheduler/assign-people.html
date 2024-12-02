@@ -1,0 +1,198 @@
+
+<!--test-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TA Scheduler - Assign People</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #6366f1, #4f46e5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .assign-container {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            width: 100%;
+            max-width: 600px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            color: #1f2937;
+        }
+
+        .course-info {
+            background: #f3f4f6;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .form-select {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 1rem;
+            background: white;
+        }
+
+        .assigned-list {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .assigned-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        .remove-btn {
+            background: #ef4444;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+
+        .action-btns {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .save-btn, .cancel-btn {
+            flex-grow: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        .save-btn {
+            background: #6366f1;
+            color: white;
+        }
+
+        .cancel-btn {
+            background: #f3f4f6;
+            color: #1f2937;
+        }
+
+        .save-btn:hover {
+            background: #4f46e5;
+        }
+
+        .cancel-btn:hover {
+            background: #e5e7eb;
+        }
+    </style>
+</head>
+<body>
+    <div class="assign-container">
+        <h1>Assign People to Course</h1>
+        
+        <div class="course-info">
+            <strong>Course:</strong> CS361 - Software Engineering
+            <br>
+            <strong>Semester:</strong> Fall 2024
+        </div>
+
+        <select id="role-select" class="form-select">
+            <option value="">Select Role to Assign</option>
+            <option value="instructor">Instructor</option>
+            <option value="ta">Teaching Assistant</option>
+        </select>
+
+        <select id="people-select" class="form-select">
+            <option value="">Select Person to Assign</option>
+            <option value="john">John Doe</option>
+            <option value="jane">Jane Smith</option>
+            <option value="mike">Mike Johnson</option>
+        </select>
+
+        <button onclick="assignPerson()" class="save-btn" style="margin-bottom: 15px;">Assign Person</button>
+
+        <div class="assigned-list">
+            <h3>Currently Assigned</h3>
+            <div class="assigned-item">
+                <span>John Doe (Instructor)</span>
+                <button class="remove-btn">Remove</button>
+            </div>
+            <div class="assigned-item">
+                <span>Jane Smith (Teaching Assistant)</span>
+                <button class="remove-btn">Remove</button>
+            </div>
+        </div>
+
+        <div class="action-btns">
+            <button class="save-btn">Save Assignments</button>
+            <button class="cancel-btn" onclick="window.location.href='Courses'">Cancel</button>
+        </div>
+    </div>
+
+    <script>
+        function assignPerson() {
+            const roleSelect = document.getElementById('role-select');
+            const peopleSelect = document.getElementById('people-select');
+            const assignedList = document.querySelector('.assigned-list');
+
+            if (roleSelect.value && peopleSelect.value) {
+                const newItem = document.createElement('div');
+                newItem.className = 'assigned-item';
+                newItem.innerHTML = `
+                    <span>${peopleSelect.options[peopleSelect.selectedIndex].text} (${roleSelect.options[roleSelect.selectedIndex].text})</span>
+                    <button class="remove-btn" onclick="this.parentElement.remove()">Remove</button>
+                `;
+                
+                assignedList.appendChild(newItem);
+                
+                roleSelect.selectedIndex = 0;
+                peopleSelect.selectedIndex = 0;
+            } else {
+                alert('Please select both a role and a person to assign.');
+            }
+        }
+
+        // Add remove functionality to existing remove buttons
+        document.querySelectorAll('.remove-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                this.closest('.assigned-item').remove();
+            });
+        });
+
+        document.querySelector('.save-btn:last-child').addEventListener('click', function() {
+            alert('Assignments saved successfully!');
+            window.location.href = 'Courses';
+        });
+    </script>
+</body>
+</html>
