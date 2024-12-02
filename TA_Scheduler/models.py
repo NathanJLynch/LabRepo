@@ -19,7 +19,7 @@ class Section(models.Model):
      #   self.section_type = section_type
 
     def __str__(self):
-        string = "[({}){}]".format(self.section_id, self.section_type)
+        string = "[({}){}]".format(self.section_id, self.section_type) #how to fix list error
         return string
 
     def change_SectionType(self, section_type):
