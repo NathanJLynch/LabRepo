@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TA Scheduler - Homepage</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #6366f1, #4f46e5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            width: 100%;
+            max-width: 800px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            color: #1f2937;
+        }
+
+        .section {
+            margin-bottom: 40px;
+        }
+
+        .schedule-list, .courses-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .schedule-list th, .courses-table th {
+            background: #f3f4f6;
+            color: #1f2937;
+            padding: 15px;
+            text-align: left;
+            border-bottom: 2px solid #e5e7eb;
+        }
+
+        .schedule-list td, .courses-table td {
+            padding: 15px;
+            border-bottom: 1px solid #e5e7eb;
+            color: #6b7280;
+        }
+
+        .action-btns {
+            display: flex;
+            gap: 10px;
+        }
+
+        .assign-btn, .delete-btn, .create-course-btn {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            cursor: pointer;
+        }
+
+        .assign-btn {
+            background: #6366f1;
+            color: white;
+        }
+
+        .delete-btn {
+            background: #ef4444;
+            color: white;
+        }
+
+        .create-course-btn {
+            margin-top: 20px;
+            background: #10b981;
+            color: white;
+        }
+
+        .create-course-btn:hover {
+            background: #0f9b73;
+        }
+
+        .back-btn {
+            margin-top: 20px;
+            padding: 12px 20px;
+            background: #f3f4f6;
+            color: #1f2937;
+            text-decoration: none;
+            border-radius: 8px;
+            display: inline-block;
+        }
+
+        .back-btn:hover {
+            background: #e5e7eb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome to TA Scheduler</h1>
+
+        <!-- Upcoming Schedule Section -->
+        <div class="section">
+            <h2>Upcoming Lectures & Labs</h2>
+            <table class="schedule-list">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Course</th>
+                        <th>Type</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Nov 30, 2024</td>
+                        <td>10:00 AM</td>
+                        <td>CS361</td>
+                        <td>Lecture</td>
+                    </tr>
+                    <tr>
+                        <td>Dec 1, 2024</td>
+                        <td>2:00 PM</td>
+                        <td>CS300</td>
+                        <td>Lab</td>
+                    </tr>
+                    <tr>
+                        <td>Dec 2, 2024</td>
+                        <td>9:00 AM</td>
+                        <td>CS250</td>
+                        <td>Lecture</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Courses Table Section -->
+        <div class="section">
+            <h2>Courses & Labs</h2>
+            <table class="courses-table">
+                <thead>
+                    <tr>
+                        <th>Course Code</th>
+                        <th>Course Name</th>
+                        <th>Semester</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>CS361</td>
+                        <td>Software Engineering</td>
+                        <td>Fall 2024</td>
+                        <td>
+                            <div class="action-btns">
+                                <button class="assign-btn" onclick="window.location.href='Assign'">Assign</button>
+                                <button class="delete-btn">Delete</button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>CS300</td>
+                        <td>Database Systems</td>
+                        <td>Fall 2024</td>
+                        <td>
+                            <div class="action-btns">
+                                <button class="assign-btn" onclick="window.location.href='Assign'">Assign</button>
+                                <button class="delete-btn">Delete</button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>CS250</td>
+                        <td>Data Structures</td>
+                        <td>Fall 2024</td>
+                        <td>
+                            <div class="action-btns">
+                                <button class="assign-btn" onclick="window.location.href='Assign'">Assign</button>
+                                <button class="delete-btn">Delete</button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <button class="create-course-btn" onclick="window.location.href='CreateCourse'">+ Create Course</button>
+        </div>
+
+        <a href="homePage" class="back-btn">Back to Dashboard</a>
+    </div>
+</body>
+</html>
