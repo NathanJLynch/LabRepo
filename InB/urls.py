@@ -16,7 +16,24 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from TA_Scheduler.views import LoginPageView
+from TA_Scheduler.views import HomePageView
+from TA_Scheduler.views import coursesPageView
+from TA_Scheduler.views import CreateAccountPageView
+from TA_Scheduler.views import EditAccountPageView
+from TA_Scheduler.views import CreateCoursePageView, AssignPageView,NotificationsView
 
 urlpatterns = [
+    path('', LoginPageView.as_view(), name='LoginPage'),
+
+    path('LoginPage', LoginPageView.as_view(), name='LoginPage'),
+    path('homePage', HomePageView.as_view(), name='homePage'),
+    path('Courses', coursesPageView.as_view(), name='courses'),
+    path('CreateAccount', CreateAccountPageView.as_view(), name='CreateAccount'),
+    path('EditAccount', EditAccountPageView.as_view(), name='EditAccount'),
+    path('CreateCourse', CreateCoursePageView.as_view(), name='CreateCourse'),
+    path('Assign', AssignPageView.as_view(), name='Assign'),
+    path('Notifications', NotificationsView.as_view(), name='Notifications'),
+
     path('admin/', admin.site.urls),
 ]
