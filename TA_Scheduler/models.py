@@ -26,26 +26,26 @@ class Section(models.Model):
         self.save()
         return True
 
-class SectionList(models.Model):
-    section_list = list()
-
-    def add_Section(self, section):
-        self.section_list.append(section)
-        self.save()
-        return True
-
-    def remove_Section(self, section):
-        self.section_list.remove(section)
-        self.save()
-        return True
-
-    def get_section_type(self, section_id):
-        return self.section_list[section_id].section_type
+#class SectionList(models.Model):
+#    section_list = list()
+#
+#    def add_Section(self, section):
+#        self.section_list.append(section)
+#        self.save()
+#        return True
+#
+#    def remove_Section(self, section):
+#        self.section_list.remove(section)
+#        self.save()
+#        return True
+#
+#    def get_section_type(self, section_id):
+#        return self.section_list[section_id].section_type
 
 class Course(models.Model):
     course_id = models.IntegerField(primary_key=True)# course id
     course_name = models.CharField(max_length=15) # name of the course
-    section_list = models.ForeignKey(Section, on_delete=models.CASCADE) # list of sections in the course
+    section_list = models.IntegerField() # list of sections in the course
 
     def __init__(self, course_id, course_name):
         self.course_id = course_id
@@ -141,6 +141,9 @@ class User(models.Model):
         self.is_active = not self.is_active
         self.save()
         return self.is_active
+
+    def __str__(self):
+        return "{} {}".format(self.first_name, self.last_name)
 
 
 
