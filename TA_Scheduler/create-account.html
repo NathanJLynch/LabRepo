@@ -1,0 +1,148 @@
+<!--test-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TA Scheduler - Create Account</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #6366f1, #4f46e5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .create-account-container {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            color: #1f2937;
+        }
+
+        p {
+            color: #6b7280;
+            margin-bottom: 20px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        .form-input:focus {
+            border-color: #6366f1;
+            outline: none;
+        }
+
+        .form-select {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 1rem;
+            background: white;
+        }
+
+        .create-btn {
+            width: 100%;
+            padding: 12px;
+            background: #6366f1;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        .create-btn:hover {
+            background: #4f46e5;
+        }
+
+        .cancel-link {
+            display: block;
+            margin-top: 15px;
+            color: #6366f1;
+            text-decoration: none;
+        }
+
+        .error-message {
+            color: #7f1d1d;
+            background: #fecaca;
+            border: 1px solid #fca5a5;
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 15px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="create-account-container">
+        <h1>Create Account</h1>
+        <p>Set up a new user account</p>
+        <form id="create-account-form">
+            <input type="text" id="full-name" class="form-input" placeholder="Full Name" required>
+            <input type="email" id="email" class="form-input" placeholder="Email Address" required>
+            <input type="password" id="password" class="form-input" placeholder="Password" required>
+            <input type="password" id="confirm-password" class="form-input" placeholder="Confirm Password" required>
+            <select id="user-role" class="form-select" required>
+                <option value="">Select User Role</option>
+                <option value="supervisor">Supervisor</option>
+                <option value="instructor">Instructor</option>
+                <option value="ta">Teaching Assistant</option>
+            </select>
+            <button type="submit" class="create-btn">Create Account</button>
+        </form>
+        <div id="error-message" class="error-message"></div>
+        <a href="LoginPage" class="cancel-link">Cancel</a>
+    </div>
+
+    <script>
+        const form = document.getElementById('create-account-form');
+        const errorMessage = document.getElementById('error-message');
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+            const role = document.getElementById('user-role').value;
+
+            if (password !== confirmPassword) {
+                errorMessage.style.display = 'block';
+                errorMessage.textContent = 'Passwords do not match.';
+                return;
+            }
+
+            if (!role) {
+                errorMessage.style.display = 'block';
+                errorMessage.textContent = 'Please select a user role.';
+                return;
+            }
+
+            errorMessage.style.display = 'none';
+            alert('Account Created Successfully!');
+            window.location.href = 'home.html';
+        });
+    </script>
+</body>
+</html>
