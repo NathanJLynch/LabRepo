@@ -10,15 +10,16 @@ from django.db import models
 ## End Notes ##
 
 class Section(models.Model):
+    # (-2 for initialization)
     section_id = models.IntegerField(primary_key=True) #section number going from 0, each course will start from 0
     section_type = models.CharField(max_length=7) #specification of section
 
-    def __init__(self, section_id, section_type):
-        self.section_id = section_id
-        self.section_type = section_type
+   # def __init__(self, section_id, section_type):
+    #    self.section_id = section_id
+     #   self.section_type = section_type
 
     def __str__(self):
-        string = "[({}){}]".format(self.section_id, self.section_type)
+        string = "[({}){}]".format(self.section_id, self.section_type) #how to fix list error
         return string
 
     def change_SectionType(self, section_type):
@@ -26,31 +27,18 @@ class Section(models.Model):
         self.save()
         return True
 
-#class SectionList(models.Model):
-#    section_list = list()
-#
-#    def add_Section(self, section):
-#        self.section_list.append(section)
-#        self.save()
-#        return True
-#
-#    def remove_Section(self, section):
-#        self.section_list.remove(section)
-#        self.save()
-#        return True
-#
-#    def get_section_type(self, section_id):
-#        return self.section_list[section_id].section_type
-
 class Course(models.Model):
     course_id = models.IntegerField(primary_key=True)# course id
-    course_name = models.CharField(max_length=15) # name of the course
+    course_name = models.CharField(max_length=50) # name of the course
     section_list = models.IntegerField() # list of sections in the course
 
-    def __init__(self, course_id, course_name):
-        self.course_id = course_id
-        self.course_name = course_name
-        self.section_list = list()
+    #def __init__(self, course_id, course_name, section_list):
+    #    self.course_id = course_id
+     #   self.course_name = course_name
+      #  self.section_list = section_list
+
+    def get_section_type(self, section_id):
+        return self.section_list[section_id].section_type
 
     def __str__(self):
         string = "({}; Sections: ".format(self.course_name)
@@ -65,6 +53,7 @@ class Course(models.Model):
 
     def add_Section(self, section):
         self.section_list.append(section)
+        self.save()
         return True
 
     def remove_Section(self, section):
@@ -78,38 +67,32 @@ class Course(models.Model):
         return True
 
 class Role(models.Model):
-    #role_id = models.IntegerField(primary_key=True)# 0 for Admin, 1 for Supervisor, 2 for Teacher, 3 for TA
+    role_id = models.IntegerField(primary_key=True)# 0 for Admin, 1 for Supervisor, 2 for Teacher, 3 for TA
     role_name = models.CharField(max_length=15)
     action_access = models.IntegerField()# each function will have an assigned number
-
-    def __init__(self, role_id, role_name, action_access):
-        self.role_id = role_id
-        self.role_name = role_name
-        self.action_access = action_access
 
     def __str__(self):
         return self.role_name
 
 
 class User(models.Model):
-    user_id = models.IntegerField(primary_key=True)
+    #user_id = models.IntegerField(primary_key=True)
+    ROLES = {
+        "Admin" : "Admin",
+        "Instructor" : "Instructor",
+        "TA" : "TA"
+    }
+
     first_name = models.CharField(max_length=15)
     last_name = models.CharField(max_length=15)
     email = models.CharField(max_length=50)
     password = models.CharField(max_length=25)
     phone_number = models.CharField(max_length=13)
-    role_id = models.IntegerField()
+    role_id = models.CharField(max_length=10, choices=ROLES)
     is_active = models.BooleanField(default=False)# not sure how this will work yet
 
-    def __init__(self, user_id, first_name, last_name, email, password, phone_number, role_id):
-        self.user_id = user_id
-        self.first_name = first_name
-        self.last_name = last_name
-        self.email = email
-        self.password = password
-        self.phone_number = phone_number
-        self.role_id = role_id
-        self.is_active = False
+    def __str__(self):
+        return self.first_name
 
     def change_email(self, new_email):
         self.email = new_email
@@ -142,16 +125,27 @@ class User(models.Model):
         self.save()
         return self.is_active
 
-    def __str__(self):
-        return "{} {}".format(self.first_name, self.last_name)
 
 
 
 # Data Structure Classes
+class SectionList(models.Model):
+    section_list = []
+
+    def add_Section(self, section):
+        self.section_list.append(section)
+        self.save()
+        return True
+
+    def remove_Section(self, section):
+        self.section_list.remove(section)
+        self.save()
+        return True
+
 class CourseList(models.Model):
-    course_list = list()
-    TestC = Course(0, "CS361")
-    TestC.add_Section(Section(0, "Lecture"))
+    course_list = []
+    TestS = Section(0, "Lecture")
+    TestC = Course(0, "CS361", [TestS])
     print(TestC)
 
 
@@ -169,7 +163,7 @@ class CourseList(models.Model):
         return self.course_list[course_id]
 
 class RolesList(models.Model):
-    role_list = list()
+    role_list = []
 
     TA = Role(0, "TA", [0])
     Teacher = Role(1, "Teacher", [1,0])
@@ -185,7 +179,7 @@ class RolesList(models.Model):
         return self.role_list[role_id].role_name
 
 class UserList(models.Model):
-    user_list = list()
+    user_list = []
     #Test = User(0, "John", "Doe", "address@uwm.edu", "Password123!", "4444444444", RolesList.role_list[0])
 
     def add_User(self, user):
