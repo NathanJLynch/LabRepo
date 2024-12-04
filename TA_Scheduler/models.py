@@ -1,4 +1,7 @@
+from django.contrib.messages import success
 from django.db import models
+import smtplib
+
 
 # Create your models here.
 ## Some Notes: ##
@@ -8,6 +11,13 @@ from django.db import models
 # - This is still in testing
 # - SectionList Class may not be needed
 ## End Notes ##
+
+USERNAME_MAX_LENGTH = 20
+USERNAME_MIN_LENGTH = 3
+PASSWORD_MAX_LENGTH = 32
+PASSWORD_MIN_LENGTH = 8
+EMAIL_MAX_LENGTH = 72 #64 for before @uwm.edu
+special_characters = "!@#$%^&*()-+?_=,<>/"
 
 class Section(models.Model):
     # (-2 for initialization)
@@ -196,6 +206,151 @@ class UserList(models.Model):
         self.user_list.remove(user)
         self.save()
         return True
+
+#--------------------------------------------------------
+# User Management
+#createAccount method. Unsure if to put in User class or not or to create UserManagement class
+def createAccount (self, accountdetails):
+
+    username = accountdetails['username']
+    email = accountdetails['email']
+    password = accountdetails['password']
+    role = accountdetails['role']
+    first_name = accountdetails['first_name']
+    last_name = accountdetails['last_name']
+    phone = accountdetails['phone_number']
+
+    if not checkX(self, "username", username):
+        return False
+        #username requirements: cannot match an active username & must be between 3 and 20 chars & no special chars
+    if not checkX(self, "email", email):
+        return False
+        #email requirements: must contain "@uwm.edu" and must be shorter than 73 chars
+    if not checkX(self, "password", password):
+        return False
+        #password requirements: must contain a special char and a number, must be between 8-32 chars
+    if not checkX(self, "role", role):
+        return False
+
+    new_user = User(username, first_name, last_name, email, password, role, phone)
+
+    if not UserList.add_User(self, new_user):
+        return False
+
+    #still have to send email
+
+    FROM = ""
+
+    TO = email
+
+    SUBJECT = "Welcome"
+
+    TEXT = "Welcome "+username+" to TA Scheduler"
+
+    new_user.toggle_active()
+
+    return True
+#----------------------------------------------------
+
+def send_email(self, username, FROM, TO, SUBJECT, TEXT):
+    pass
+
+#----------------------------------------------------
+
+def editAccountInfo(self, user, updatedinfo):
+
+    if not user in UserList.user_list or updatedinfo is None:
+        return False
+
+    if user.email != updatedinfo['email']:
+        user.change_email(updatedinfo['email'])
+
+    if user.phone_number != updatedinfo['phone_number']:
+        user.change_phone_number(updatedinfo['phone_number'])
+
+    if user.first_name != updatedinfo['first_name']:
+        user.change_name(updatedinfo['first_name'], user.last_name)
+
+    if user.last_name != updatedinfo['last_name']:
+        user.change_name(user.first_name, updatedinfo['last_name'])
+
+    if user.role_id != updatedinfo['role']:
+        user.change_role(updatedinfo['role'])
+
+    if user.password != updatedinfo['password']:
+        user.change_password(updatedinfo['password'])
+
+    #send email detailing edits to user email
+
+    return True
+
+#-----------------------------------------------------
+
+def validateRole(self, user, reqrole):
+    if user not in UserList.user_list:
+        return False
+
+    return user.role_id == reqrole
+
+def checkPermission(self, user, action, resourcetype, resourceid): #incomplete
+    ACTIONS = ["create", "read", "update", "delete"]
+    RESOURCETYPES = ["user", "course", "lab_section", "notification"]
+
+    # log access attempt for user
+
+    if user not in UserList.user_list or action not in ACTIONS or resourcetype not in RESOURCETYPES:
+        return False
+
+    if user.role_id == "TA":
+        pass
+    if user.role_id == "Teacher":
+        pass
+    if user.role_id == "Admin":
+        pass
+    if user.role_id == "Supervisor":
+        pass
+
+
+def checkX(self, type, new):
+    TYPES = ["username", "password", "email", "role"]
+
+    if type not in TYPES:
+        return False
+
+    if type == "username":
+        if new is None or (any(c in special_characters for c in new)) or (
+                len(new) < USERNAME_MIN_LENGTH) or (len(new) > USERNAME_MAX_LENGTH):
+            return False
+        else:
+            for i in UserList.user_list:
+                if i.username == new:
+                    return False
+        return True
+
+    if type == "password":
+        if (new is None) or (not any(c in special_characters for c in new)) or (
+                not any(c.isdigit() for c in new) or len(new) < USERNAME_MIN_LENGTH) or (
+                len(new) > USERNAME_MAX_LENGTH) or (len(new) < PASSWORD_MIN_LENGTH):
+            return False
+        return True
+
+    if type == "email":
+        if new is None or "uwm.edu" not in new or len(new) > EMAIL_MAX_LENGTH:
+            return False
+        else:
+            for i in UserList.user_list:
+                if i.email == new:
+                    return False
+        return True
+
+    if type == "role":
+        if new is None or new not in RolesList.role_list:
+            return False
+        return True
+
+
+
+
 
 
 
