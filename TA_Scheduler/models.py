@@ -101,7 +101,7 @@ class User(models.Model):
     is_active = models.BooleanField(default=False)# not sure how this will work yet
 
     def __init__(self, user_id, first_name, last_name, email, password, phone_number, role_id):
-        #self.user_id = user_id
+        self.user_id = user_id
         self.first_name = first_name
         self.last_name = last_name
         self.email = email
@@ -240,7 +240,7 @@ class UserManagement(models.Model):
 
         # still have to send email
 
-        FROM = ""
+        FROM = "TA_SCHEDULER"
 
         TO = email
 
@@ -248,14 +248,18 @@ class UserManagement(models.Model):
 
         TEXT = "Welcome " + username + " to TA Scheduler"
 
+        if not self.send_email(FROM, TO, SUBJECT, TEXT):
+            return False
+
+
         new_user.toggle_active()
 
         return True
 
     # ----------------------------------------------------
 
-    def send_email(self, username, FROM, TO, SUBJECT, TEXT):
-        pass
+    def send_email(self, FROM, TO, SUBJECT, TEXT):
+        return True
 
     # ----------------------------------------------------
 
@@ -305,10 +309,11 @@ def checkPermission(self, user, action, resourcetype, resourceid): #incomplete
         return False
 
     if user.role_id == "TA":
-        if resourcetype == "user"
-            pass
+        if resourcetype == "user":
+            return (resourceid == user.user_id)
+
         if resourcetype == "course":
-            pass
+
         if resourcetype == "lab_section":
             pass
         if resourcetype == "notification":
@@ -321,7 +326,7 @@ def checkPermission(self, user, action, resourcetype, resourceid): #incomplete
     if user.role_id == "Supervisor":
 
 
-def checkX(self, type, new):
+def checkX(type, new):
     TYPES = ["username", "password", "email", "role"]
 
     if type not in TYPES:
