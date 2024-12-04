@@ -210,79 +210,82 @@ class UserList(models.Model):
 #--------------------------------------------------------
 # User Management
 #createAccount method. Unsure if to put in User class or not or to create UserManagement class
-def createAccount (self, accountdetails):
+class UserManagement(models.Model):
+    def createAccount(self, accountdetails):
 
-    username = accountdetails['username']
-    email = accountdetails['email']
-    password = accountdetails['password']
-    role = accountdetails['role']
-    first_name = accountdetails['first_name']
-    last_name = accountdetails['last_name']
-    phone = accountdetails['phone_number']
+        username = accountdetails['username']
+        email = accountdetails['email']
+        password = accountdetails['password']
+        role = accountdetails['role']
+        first_name = accountdetails['first_name']
+        last_name = accountdetails['last_name']
+        phone = accountdetails['phone_number']
 
-    if not checkX(self, "username", username):
-        return False
-        #username requirements: cannot match an active username & must be between 3 and 20 chars & no special chars
-    if not checkX(self, "email", email):
-        return False
-        #email requirements: must contain "@uwm.edu" and must be shorter than 73 chars
-    if not checkX(self, "password", password):
-        return False
-        #password requirements: must contain a special char and a number, must be between 8-32 chars
-    if not checkX(self, "role", role):
-        return False
+        if not checkX(self, "username", username):
+            return False
+            # username requirements: cannot match an active username & must be between 3 and 20 chars & no special chars
+        if not checkX(self, "email", email):
+            return False
+            # email requirements: must contain "@uwm.edu" and must be shorter than 73 chars
+        if not checkX(self, "password", password):
+            return False
+            # password requirements: must contain a special char and a number, must be between 8-32 chars
+        if not checkX(self, "role", role):
+            return False
 
-    new_user = User(username, first_name, last_name, email, password, role, phone)
+        new_user = User(username, first_name, last_name, email, password, role, phone)
 
-    if not UserList.add_User(self, new_user):
-        return False
+        if not UserList.add_User(self, new_user):
+            return False
 
-    #still have to send email
+        # still have to send email
 
-    FROM = ""
+        FROM = ""
 
-    TO = email
+        TO = email
 
-    SUBJECT = "Welcome"
+        SUBJECT = "Welcome"
 
-    TEXT = "Welcome "+username+" to TA Scheduler"
+        TEXT = "Welcome " + username + " to TA Scheduler"
 
-    new_user.toggle_active()
+        new_user.toggle_active()
 
-    return True
-#----------------------------------------------------
+        return True
 
-def send_email(self, username, FROM, TO, SUBJECT, TEXT):
-    pass
+    # ----------------------------------------------------
 
-#----------------------------------------------------
+    def send_email(self, username, FROM, TO, SUBJECT, TEXT):
+        pass
 
-def editAccountInfo(self, user, updatedinfo):
+    # ----------------------------------------------------
 
-    if not user in UserList.user_list or updatedinfo is None:
-        return False
+    def editAccountInfo(self, user, updatedinfo):
 
-    if user.email != updatedinfo['email']:
-        user.change_email(updatedinfo['email'])
+        if not user in UserList.user_list or updatedinfo is None:
+            return False
 
-    if user.phone_number != updatedinfo['phone_number']:
-        user.change_phone_number(updatedinfo['phone_number'])
+        if user.email != updatedinfo['email']:
+            user.change_email(updatedinfo['email'])
 
-    if user.first_name != updatedinfo['first_name']:
-        user.change_name(updatedinfo['first_name'], user.last_name)
+        if user.phone_number != updatedinfo['phone_number']:
+            user.change_phone_number(updatedinfo['phone_number'])
 
-    if user.last_name != updatedinfo['last_name']:
-        user.change_name(user.first_name, updatedinfo['last_name'])
+        if user.first_name != updatedinfo['first_name']:
+            user.change_name(updatedinfo['first_name'], user.last_name)
 
-    if user.role_id != updatedinfo['role']:
-        user.change_role(updatedinfo['role'])
+        if user.last_name != updatedinfo['last_name']:
+            user.change_name(user.first_name, updatedinfo['last_name'])
 
-    if user.password != updatedinfo['password']:
-        user.change_password(updatedinfo['password'])
+        if user.role_id != updatedinfo['role']:
+            user.change_role(updatedinfo['role'])
 
-    #send email detailing edits to user email
+        if user.password != updatedinfo['password']:
+            user.change_password(updatedinfo['password'])
 
-    return True
+        # send email detailing edits to user email
+
+        return True
+
 
 #-----------------------------------------------------
 
@@ -302,13 +305,20 @@ def checkPermission(self, user, action, resourcetype, resourceid): #incomplete
         return False
 
     if user.role_id == "TA":
-        pass
+        if resourcetype == "user"
+            pass
+        if resourcetype == "course":
+            pass
+        if resourcetype == "lab_section":
+            pass
+        if resourcetype == "notification":
+            pass
+
     if user.role_id == "Teacher":
-        pass
+
     if user.role_id == "Admin":
-        pass
+
     if user.role_id == "Supervisor":
-        pass
 
 
 def checkX(self, type, new):
