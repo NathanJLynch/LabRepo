@@ -1,10 +1,11 @@
+from django.contrib.auth.forms import UserCreationForm
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.template.context_processors import request
 from django.urls import reverse
 from django.views.generic import TemplateView
 
-from TA_Scheduler.models import Course
+from TA_Scheduler.models import Course, UserList, User
 
 
 class LoginPageView(TemplateView):
@@ -14,11 +15,31 @@ class LoginPageView(TemplateView):
 class HomePageView(TemplateView):
     template_name = 'homePage.html'
 
+
 class CreateAccountPageView(TemplateView):
     template_name = 'create-account.html'
 
+
+
+    def post(self, request, *args, **kwargs):
+        # Get course details from the POST request
+        name = request.POST.get('full-name')
+        email = request.POST.get('course_code')
+        password = request.POST.get('password')
+        # phone = request.POST.get('phone')
+        role = request.POST.get('role')
+
+        User.objects.create(name=name, email=email, password=password, role_id=role)
+
+        if name and email and password and role:
+            # Create and save a new user
+            User.objects.create(name=name, email=email, password=password, role_id=role)
+        # Redirect back to the courses page
+        return HttpResponseRedirect(reverse('listAccounts'))
+
 class EditAccountPageView(TemplateView):
     template_name = 'edit-account.html'
+
 
 class coursesPageView(TemplateView):
     template_name = 'courses.html'

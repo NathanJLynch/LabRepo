@@ -1,6 +1,7 @@
 from itertools import filterfalse
 
 from django.test import TestCase
+from TA_Scheduler.models import Course, User
 
 # Create your tests here
 
@@ -14,7 +15,10 @@ class TestAccountCreation(TestCase):
         self.role = 'Supervisor'
 
     def test_create_account(self):
-        result = self.user.createAccount('Jimbo', 'Jimbo@uwm.edu', self.password, self.role)
+        self.setUp()
+        from TA_Scheduler.models import Course, UserList, User
+        result = User.objects.create(full_name=self.username, email=self.email, password=self.password, role_id=self.role)
+
         assert result.success == True
         # side effect : email sent
 

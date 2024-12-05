@@ -62,21 +62,23 @@ class Role(models.Model):
 
 class User(models.Model):
     #user_id = models.IntegerField(primary_key=True)
-    first_name = models.CharField(max_length=15)
-    last_name = models.CharField(max_length=15)
+    #first_name = models.CharField(max_length=15)
+    #last_name = models.CharField(max_length=15)
+    full_name = models.CharField(max_length=50)
     email = models.CharField(max_length=50)
     password = models.CharField(max_length=25)
-    phone_number = models.CharField(max_length=13)
+    #phone_number = models.CharField(max_length=13)
     role_id = models.IntegerField()
     is_active = models.BooleanField(default=False)# not sure how this will work yet
 
-    def __init__(self, user_id, first_name, last_name, email, password, phone_number, role_id):
+    def __init__(self, full_name, email, password, role_id):
         #self.user_id = user_id
-        self.first_name = first_name
-        self.last_name = last_name
+        #self.first_name = first_name
+        #self.last_name = last_name
+        self.full_name = full_name
         self.email = email
         self.password = password
-        self.phone_number = phone_number
+        #self.phone_number = phone_number
         self.role_id = role_id
         self.is_active = False
 
@@ -95,9 +97,8 @@ class User(models.Model):
         self.save()
         return True
 
-    def change_name(self, first_name, last_name):
-        self.first_name = first_name
-        self.last_name = last_name
+    def change_name(self, full_name):
+        self.full_name
         self.save()
         return True
 
