@@ -55,7 +55,7 @@ ROOT_URLCONF = 'InB.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates']
+        'DIRS': [BASE_DIR / 'TA_Scheduler/templates']
         ,
         'APP_DIRS': True,
         'OPTIONS': {
