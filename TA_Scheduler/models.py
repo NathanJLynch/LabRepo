@@ -256,12 +256,10 @@ class UserManagement(models.Model):
 
         return True
 
-    # ----------------------------------------------------
 
     def send_email(self, FROM, TO, SUBJECT, TEXT):
         return True
 
-    # ----------------------------------------------------
 
     def editAccountInfo(self, user, updatedinfo):
 
@@ -313,18 +311,18 @@ def checkPermission(self, user, action, resourcetype, resourceid): #incomplete
             return (resourceid == user.user_id)
 
         if resourcetype == "course":
-
+            pass
         if resourcetype == "lab_section":
             pass
         if resourcetype == "notification":
             pass
 
     if user.role_id == "Teacher":
-
+        pass
     if user.role_id == "Admin":
-
+        pass
     if user.role_id == "Supervisor":
-
+        pass
 
 def checkX(type, new):
     TYPES = ["username", "password", "email", "role"]
