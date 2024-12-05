@@ -92,64 +92,69 @@ class TestInvalidData(TestCase):
         self.assertTrue(self.user.check_email(self.email), False)
 
 
+# Account Deletion Tests
+class TestAccountDeletion(TestCase):
+    def setUp(self):
+        self.username = 'Nathan'
+
+    def test_delete_account(self):
+        result = self.user.deleteAccount(self.username)
+        assert result.success == True
+        # side effect : email sent
+
+    def test_delete_nonexistent_user(self):
+        self.user.deleteAccount(self.username)
+        result = self.user.deleteAccount(self.username)
+        assert result.success == False, "user Does Not exist/ Already has been deleted"
+        assert result.error("Expected validation to fail for non existent user , but it passed.")
+
+    def test_delete_invalid_course_input(self):
+        result = self.user.deleteAccount(self.username)
+        assert result.success == False, "Input is not valid"
+        assert result.error("Expected validation to fail for invalid user input , but it passed.")
+
+    def test_delete_null_course_input(self):
+        result = self.user.deleteAccount(self.username)
+        assert result.success == False, "Input is null"
+        assert result.error("Expected validation to fail for null user input , but it passed.")
+
+
 # Course Creation Tests
 class TestCourseValidation(TestCase):
 
     def setup_method(self):
         # Reusable data for tests
-        self.valid_course_details = {
-            "course_id" : "CS101",
-            "teacher": "Micheal Long",
-            "ta": "Jeffery Thomas"
-        }
+        self.courseId = 'CS101'
+        self.teacher = 'Micheal Long'
+        self.ta = 'Jeffery Thomas'
 
-        def test_login_success(self):
-            # Test successful login with valid credentials
-            result = self.user.TestCourseValidation(self.valid_course_details)
-            assert result.success == True
+    def test_login_success(self):
+        # Test successful login with valid credentials
+        result = self.user.createCourse(self.courseId, self.teacher, self.ta)
+        assert result.success == True
 
 
-        def test_duplicate_course_id(self):
-            result = self.user.TestCourseValidation(self.valid_course_details)
-            result2 = self.user.TestCourseValidation(self.valid_course_details)
-            # Assert validation fails for duplicate CourseID
-            assert result2.success == False
-            assert result.error ("Expected validation to fail for invalid teacher assignment, but it passed.")
+    def test_duplicate_course_id(self):
+        self.user.createCourse(self.courseId, self.teacher, self.ta)
+        result = self.user.createCourse(self.courseId, self.teacher, self.ta)
+        # Assert validation fails for duplicate CourseID
+        assert result.success == False
+        assert result.error ("Expected validation to fail for invalid teacher assignment, but it passed.")
 
     def test_invalid_teacher_assignment(self):
-        # Setup: Create a course with an invalid teacher ID
-        self.invalid_course_detailsT = {
-            "course_id": "CS101",
-            "teacher": "M",
-            "ta": "Jeffery Thomas"
-        }
-        result = self.user.TestCourseValidation(self.invalid_course_detailsT)
+        result = self.user.createCourse(self.courseId, "M", self.ta)
         # Assert validation fails for invalid teacher assignment
         assert result.success == False
         assert result.error("Expected validation to fail for invalid teacher assignment, but it passed.")
 
     def test_invalid_ta_assignment(self):
-        # Setup: Create a course with an invalid TA ID
-        self.invalid_course_detailsTA = {
-            "course_id": "CS101",
-            "teacher": "Micheal Long",
-            "ta": " J"
-        }
-        result = self.user.TestCourseValidation(self.invalid_course_detailsTA)
-
+        result = self.user.createCourse(self.courseId, self.teacher, "u")
         # Assert validation fails for invalid TA assignment
         assert result.success == False
-        assert result.error("Expected validation to fail for invalid teacher assignment, but it passed.")
+        assert result.error("Expected validation to fail for invalid ta assignment, but it passed.")
 
     def test_missing_course_id(self):
-        # Setup: Create a course with a missing CourseID
-        self.invalid_course_detailsCI = {
-            "course_id": "CS101",
-            "teacher": "",
-            "ta": "Jeffery Thomas"
-        }
-        result = self.user.TestCourseValidation(self.invalid_course_detailsCI)
-
+        result = self.user.createCourse("et", self.teacher, self.ta)
         # Assert validation fails for missing CourseID
         assert result.success == False
         assert result.error("Expected validation to fail for invalid teacher assignment, but it passed.")
@@ -159,8 +164,26 @@ class TestCourseValidation(TestCase):
 class TestCourseDeletion(TestCase):
     def setup_method(self):
         # Reusable data for tests
-        self.valid_course_details = {
-            "course_id": "CS101",
-            "teacher": "Micheal Long",
-            "ta": "Jeffery Thomas"
-        }
+        self.courseId = 'CS101'
+
+    def test_delete_success(self):
+        # Test successful login with valid credentials
+        result = self.user.deleteCourse(self.courseId)
+        assert result.success == True
+
+    def test_delete_nonexistent_course(self):
+        self.user.deleteCourse(self.courseId)
+        result = self.user.deleteCourse(self.courseId)
+        assert result.success == False, "Course Does Not exist/ Already has been deleted"
+        assert result.error("Expected validation to fail for non existent course , but it passed.")
+
+    def test_delete_invalid_course_input(self):
+        result = self.user.deleteCourse("e")
+        assert result.success == False, "Input is not valid"
+        assert result.error("Expected validation to fail for invalid course input , but it passed.")
+
+    def test_delete_null_course_input(self):
+        result = self.user.deleteCourse(" ")
+        assert result.success == False, "Course Input is null"
+        assert result.error("Expected validation to fail for null course input , but it passed.")
+
