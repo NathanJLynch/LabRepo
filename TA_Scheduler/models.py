@@ -292,6 +292,7 @@ class UserManagement(models.Model):
 #-----------------------------------------------------
 
 
+
 def validateRole(self, user, reqrole):
     if user not in UserList.user_list:
         return False
