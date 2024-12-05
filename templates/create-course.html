@@ -108,20 +108,21 @@
     <div class="create-course-container">
         <h1>Create New Course</h1>
         <p>Fill in the course details</p>
-        <form id="create-course-form">
+        <form method="post">
+            {% csrf_token %}
             <div class="form-group">
                 <label for="course-code">Course Code</label>
-                <input type="text" id="course-code" class="form-input" placeholder="e.g. CS361" required>
+                <input type="text" id="course_code" name="course_code" class="form-input" placeholder="e.g. CS361" required>
             </div>
 
             <div class="form-group">
                 <label for="course-name">Course Name</label>
-                <input type="text" id="course-name" class="form-input" placeholder="e.g. Software Engineering" required>
+                <input type="text" id="course_name" name="course_name" class="form-input" placeholder="e.g. Software Engineering" required>
             </div>
 
             <div class="form-group">
-                <label for="semester">Semester</label>
-                <select id="semester" class="form-select" required>
+                <label for="course_sem">Semester</label>
+                <select id="course_sem" name="course_sem" class="form-select" required>
                     <option value="">Select Semester</option>
                     <option value="fall-2024">Fall 2024</option>
                     <option value="spring-2025">Spring 2025</option>
@@ -130,8 +131,8 @@
             </div>
 
             <div class="form-group">
-                <label for="course-description">Course Description</label>
-                <textarea id="course-description" class="form-input" rows="4" placeholder="Enter a brief course description" required></textarea>
+                <label for="course-instructor">Course Instructor</label>
+                <input type="text" id="course_instructor" name="course_instructor" class="form-input" placeholder="e.g. Micheal Sampson" required>
             </div>
 
             <button type="submit" class="create-btn">Create Course</button>

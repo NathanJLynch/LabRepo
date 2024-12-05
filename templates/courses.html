@@ -190,6 +190,35 @@
                             </div>
                         </td>
                     </tr>
+
+                    {% for course in courses %}
+                        <tr>
+                            <td>{{ course.course_code }}</td>
+                            <td>{{ course.course_name }}</td>
+                            {% if course.course_sem == "fall-2024" %}
+                            <td>Fall 2024</td>
+                            {% elif course.course_sem == "spring-2025" %}
+                            <td>Spring 2025</td>
+                            {% elif course.course_sem == "summer-2025" %}
+                            <td>Summer 2025</td>
+                            {% else %}
+                            <td>Unknown </td>
+                            {% endif %}
+                            <td>
+                                <div class="action-btns">
+                                    <button class="assign-btn" onclick="window.location.href='Assign'">Assign</button>
+                                    <form method="post" style="display:inline;">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="delete_course_id" value="{{ course.course_id }}">
+                                    <button type="submit" class="delete-btn">Delete</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+
+                    {% endfor %}
+
                 </tbody>
             </table>
             <button class="create-course-btn" onclick="window.location.href='CreateCourse'">+ Create Course</button>

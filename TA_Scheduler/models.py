@@ -9,60 +9,40 @@ from django.db import models
 # - SectionList Class may not be needed
 ## End Notes ##
 
-class Section(models.Model):
-    # (-2 for initialization)
-    section_id = models.IntegerField(primary_key=True) #section number going from 0, each course will start from 0
-    section_type = models.CharField(max_length=7) #specification of section
-
-    def __init__(self, section_id, section_type):
-        self.section_id = section_id
-        self.section_type = section_type
-
-    def __str__(self):
-        string = "[({}){}]".format(self.section_id, self.section_type)
-        return string
-
-    def change_SectionType(self, section_type):
-        self.section_type = section_type
-        self.save()
-        return True
+# class Section(models.Model):
+#     # (-2 for initialization)
+#     section_id = models.IntegerField(primary_key=True) #section number going from 0, each course will start from 0
+#     section_type = models.CharField(max_length=7) #specification of section
+#
+#     def __init__(self, section_id, section_type):
+#         self.section_id = section_id
+#         self.section_type = section_type
+#
+#     def __str__(self):
+#         string = "[({}){}]".format(self.section_id, self.section_type)
+#         return string
+#
+#     def change_SectionType(self, section_type):
+#         self.section_type = section_type
+#         self.save()
+#         return True
 
 class Course(models.Model):
-    course_id = models.IntegerField(primary_key=True)# course id
-    course_name = models.CharField(max_length=15) # name of the course
-    section_list = models.IntegerField() # list of sections in the course
-
-    def __init__(self, course_id, course_name, section_list):
-        self.course_id = course_id
-        self.course_name = course_name
-        self.section_list = section_list
-
-    def get_section_type(self, section_id):
-        return self.section_list[section_id].section_type
+    course_id = models.IntegerField(primary_key=True)
+    course_name = models.CharField(max_length=50) # name of the course
+    course_code = models.CharField(max_length=15, unique = True,null = True)  # course code
+    course_sem = models.CharField(max_length=20, unique=True,null= True)  # course sem
+    course_instructor = models.CharField(max_length=50, unique=True,null = True)  # course teacher
 
     def __str__(self):
-        string = "({}; Sections: ".format(self.course_name)
-        #iterates through section list and appends section type onto string
-        i = 0
-        for section in self.section_list:
-            if i > 0:
-                string += ", "
-            string += "{}".format(section)
-            i += 1
-        return string
+        return self.course_name
 
-    def add_Section(self, section):
-        self.section_list.append(section)
-        self.save()
-        return True
 
-    def remove_Section(self, section):
-        self.section_list.remove(section)
-        self.save()
-        return True
-
-    def change_CourseName(self, course_name):
+    def change_CourseName(self, course_name, course_code,course_sem, course_instructor):
         self.course_name = course_name
+        self.course_code = course_code
+        self.course_sem = course_sem
+        self.course_instructor = course_instructor
         self.save()
         return True
 
@@ -134,38 +114,38 @@ class User(models.Model):
 
 
 # Data Structure Classes
-class SectionList(models.Model):
-    section_list = []
-
-    def add_Section(self, section):
-        self.section_list.append(section)
-        self.save()
-        return True
-
-    def remove_Section(self, section):
-        self.section_list.remove(section)
-        self.save()
-        return True
-
-class CourseList(models.Model):
-    course_list = []
-    TestS = Section(0, "Lecture")
-    TestC = Course(0, "CS361", [TestS])
-    print(TestC)
-
-
-    def add_Course(self, course):
-        self.course_list.append(course)
-        self.save()
-        return True
-
-    def remove_Course(self, course):
-        self.course_list.remove(course)
-        self.save()
-        return True
-
-    def get_CourseName(self, course_id):
-        return self.course_list[course_id]
+# class SectionList(models.Model):
+#     section_list = []
+#
+#     def add_Section(self, section):
+#         self.section_list.append(section)
+#         self.save()
+#         return True
+#
+#     def remove_Section(self, section):
+#         self.section_list.remove(section)
+#         self.save()
+#         return True
+#
+# class CourseList(models.Model):
+#     course_list = []
+#     TestS = Section(0, "Lecture")
+#     TestC = Course(0, "CS361", [TestS])
+#     print(TestC)
+#
+#
+#     def add_Course(self, course):
+#         self.course_list.append(course)
+#         self.save()
+#         return True
+#
+#     def remove_Course(self, course):
+#         self.course_list.remove(course)
+#         self.save()
+#         return True
+#
+#     def get_CourseName(self, course_id):
+#         return self.course_list[course_id]
 
 class RolesList(models.Model):
     role_list = []
