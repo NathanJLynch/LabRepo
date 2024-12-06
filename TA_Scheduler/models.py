@@ -201,11 +201,14 @@ class Validator(models.Model):
 
     def validate_Password(self, password):
 
-        return self.contains_Special(password) and len(password) >= 8 and len(password) <= 25 and self.contains_Letter(password) and self.contains_Number(password)
+        return (Validator.contains_Special(self, password) and
+                ' ' not in password and 8 <= len(password) <= 25
+                and Validator.contains_Letter(self, password) and
+                Validator.contains_Number(self, password))
 
     def validate_Email(self, email):
         emails_substr = ["uwm.edu","gmail.com"]
-        if '@' not in email or ' ' in email:
+        if '@' not in email or ' ' in email or len(email) < 6 or len(email) > 50:
             return False
 
         a, b = email.split('@',1)
