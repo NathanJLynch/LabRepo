@@ -26,6 +26,10 @@ class EmailValidatorTests(TestCase):
         self.assertEqual(False, Validator.validate_Email(self, "@gmail.com"))
         self.assertEqual(False, Validator.validate_Email(self, "qwertyuiopasdfghjklzxcvbnmqwertyuiopasdfghjklzxcvbnm@gmail.com"))
 
+    def test_repeated_email(self):
+        self.assertEqual(True, Validator.validate_Email(self, "james@gmail.com"))
+        self.assertEqual(False, Validator.validate_Email(self, "james@gmail.com"))
+
 class PasswordValidatorTests(TestCase):
     def setUp(self):
         pass

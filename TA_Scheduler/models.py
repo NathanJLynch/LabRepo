@@ -180,9 +180,12 @@ class UserList(models.Model):
         self.save()
         return True
 
+class EmailList(models.Model):
+    email_list = []
+
 
 class Validator(models.Model):
-    used_emails =[]
+
 
     def contains_Special(self, input_str):
         special_characters = "!@#$%^&*()-+?._=,<>/"
@@ -216,8 +219,8 @@ class Validator(models.Model):
         if not a or Validator.contains_Special(self, a):
             return False
 
-        if b in emails_substr and email not in Validator.used_emails:
-            Validator.used_emails.append(email)
+        if b in emails_substr and email not in EmailList.email_list:
+            EmailList.email_list.append(email)
             return True
         return False
 
