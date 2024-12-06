@@ -1,3 +1,5 @@
+from os.path import split
+
 from django.db import models
 
 # Create your models here.
@@ -180,9 +182,10 @@ class UserList(models.Model):
 
 
 class Validator(models.Model):
+    used_emails =[]
 
     def contains_Special(self, input_str):
-        special_characters = "!@#$%^&*()-+?_=,<>/"
+        special_characters = "!@#$%^&*()-+?._=,<>/"
 
         return any(c in special_characters for c in input_str)
 
@@ -201,8 +204,17 @@ class Validator(models.Model):
         return self.contains_Special(password) and len(password) >= 8 and len(password) <= 25 and self.contains_Letter(password) and self.contains_Number(password)
 
     def validate_Email(self, email):
-        substr = ["@uwm.edu","@gmail.com"]
+        emails_substr = ["uwm.edu","gmail.com"]
+        if '@' not in email or ' ' in email:
+            return False
 
-        return any(c in substr for c in email)
+        a, b = email.split('@',1)
 
+        if not a or Validator.contains_Special(self, a):
+            return False
+
+        if b in emails_substr and email not in Validator.used_emails:
+            Validator.used_emails.append(email)
+            return True
+        return False
 
