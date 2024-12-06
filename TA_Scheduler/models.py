@@ -179,4 +179,30 @@ class UserList(models.Model):
         return True
 
 
+class Validator(models.Model):
+
+    def contains_Special(self, input_str):
+        special_characters = "!@#$%^&*()-+?_=,<>/"
+
+        return any(c in special_characters for c in input_str)
+
+    def contains_Letter(self, input_str):
+        letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+
+        return any(c in letters for c in input_str)
+
+    def contains_Number(self, input_str):
+        numbers = "0123456789"
+
+        return any(c in numbers for c in input_str)
+
+    def validate_Password(self, password):
+
+        return self.contains_Special(password) and len(password) >= 8 and len(password) <= 25 and self.contains_Letter(password) and self.contains_Number(password)
+
+    def validate_Email(self, email):
+        substr = ["@uwm.edu","@gmail.com"]
+
+        return any(c in substr for c in email)
+
 
