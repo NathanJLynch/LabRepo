@@ -1,0 +1,199 @@
+<!--test-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TA Scheduler - Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f4f5f7;
+            color: #333;
+        }
+
+        .dashboard-container {
+            display: flex;
+            height: 100vh;
+        }
+
+        .navigation {
+            width: 250px;
+            background-color: #ffffff;
+            border-right: 1px solid #e0e4e8;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #6366f1;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .nav-menu {
+            list-style: none;
+        }
+
+        .nav-menu li {
+            margin-bottom: 15px;
+        }
+
+        .nav-menu a {
+            text-decoration: none;
+            color: #6b7280;
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-radius: 8px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .nav-menu a:hover, .nav-menu a.active {
+            background-color: #f3f4f6;
+            color: #6366f1;
+        }
+
+        .main-content {
+            flex-grow: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .dashboard-title {
+            font-size: 1.75rem;
+            font-weight: bold;
+        }
+
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .action-card {
+            background-color: #ffffff;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s;
+        }
+
+        .action-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .action-card h3 {
+            margin-bottom: 10px;
+            color: #6366f1;
+        }
+
+        .action-card p {
+            color: #6b7280;
+        }
+
+        .logout-btn {
+            margin-top: auto;
+            width: 100%;
+            padding: 10px;
+            background-color: #ef4444;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: #6366f1;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-weight: bold;
+        }
+
+        .user-details h2 {
+            font-size: 1.25rem;
+        }
+
+        .user-details p {
+            color: #6b7280;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <nav class="navigation">
+            <div class="logo">TA Scheduler</div>
+            <ul class="nav-menu">
+                <li><a href="#" class="active">Dashboard</a></li>
+                <li><a href="EditAccount">Accounts</a></li>
+                <li><a href="Courses">Courses & Labs</a></li>
+                <li><a href="Notifications">Notifications</a></li>
+            </ul>
+            <button class="logout-btn" onclick="window.location.href='LoginPage'">Logout</button>
+        </nav>
+
+        <main class="main-content">
+            <header class="header">
+                <h1 class="dashboard-title">Dashboard</h1>
+            </header>
+
+            <div class="user-info">
+                <div class="user-avatar">JD</div>
+                <div class="user-details">
+                    <h2>John Doe</h2>
+                    <p>Instructor</p>
+                </div>
+            </div>
+
+            <div class="quick-actions">
+                <div class="action-card" onclick="window.location.href='ListAccounts'">
+                    <h3>Manage Accounts</h3>
+                    <p>View and edit user accounts and permissions</p>
+                </div>
+                <div class="action-card" onclick="window.location.href='Courses'">
+                    <h3>Courses & Labs</h3>
+                    <p>Manage course and lab section details</p>
+                </div>
+                <div class="action-card" onclick="window.location.href='Notifications'">
+                    <h3>Notifications</h3>
+                    <p>Send and view system notifications</p>
+                </div>
+                <div class="action-card" onclick="window.location.href='CreateAccount'">
+                    <h3>Create Account</h3>
+                    <p>Add new users to the system</p>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

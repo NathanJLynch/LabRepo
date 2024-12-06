@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TA Scheduler - List Accounts</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #6366f1, #4f46e5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .accounts-container {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            width: 100%;
+            max-width: 900px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            color: #1f2937;
+        }
+
+        .search-bar {
+            display: flex;
+            margin-bottom: 20px;
+        }
+
+        .search-input {
+            flex-grow: 1;
+            padding: 12px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px 0 0 8px;
+            font-size: 1rem;
+        }
+
+        .search-btn, .create-account-btn {
+            padding: 12px 20px;
+            background: #6366f1;
+            color: #fff;
+            border: none;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .search-btn {
+            border-radius: 0 8px 8px 0;
+        }
+
+        .create-account-btn {
+            border-radius: 8px;
+            margin-left: 10px;
+        }
+
+        .search-btn:hover, .create-account-btn:hover {
+            background: #4f46e5;
+        }
+
+        .accounts-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .accounts-table th {
+            background: #f3f4f6;
+            color: #1f2937;
+            padding: 15px;
+            text-align: left;
+            border-bottom: 2px solid #e5e7eb;
+        }
+
+        .accounts-table td {
+            padding: 15px;
+            border-bottom: 1px solid #e5e7eb;
+            color: #6b7280;
+        }
+
+        .action-btns {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .view-btn, .edit-btn, .delete-btn {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            cursor: pointer;
+        }
+
+        .view-btn {
+            background: #10b981;
+            color: white;
+        }
+
+        .edit-btn {
+            background: #f59e0b;
+            color: white;
+        }
+
+        .delete-btn {
+            background: #ef4444;
+            color: white;
+        }
+
+        .back-btn {
+            margin-top: 20px;
+            padding: 12px 20px;
+            background: #f3f4f6;
+            color: #1f2937;
+            text-decoration: none;
+            border-radius: 8px;
+            display: inline-block;
+        }
+
+        .back-btn:hover {
+            background: #e5e7eb;
+        }
+
+        .role-tag {
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .role-supervisor {
+            background: #6366f1;
+            color: white;
+        }
+
+        .role-instructor {
+            background: #10b981;
+            color: white;
+        }
+
+        .role-ta {
+            background: #f59e0b;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="accounts-container">
+        <h1>User Accounts</h1>
+
+        <div class="search-bar">
+            <button class="create-account-btn" onclick="window.location.href='CreateAccount'">+ Create Account</button>
+        </div>
+
+        <table class="accounts-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>John Doe</td>
+                    <td>john.doe@university.edu</td>
+                    <td><span class="role-tag role-instructor">Instructor</span></td>
+                    <td>
+                        <div class="action-btns">
+                            <button class="edit-btn" onclick="window.location.href='EditAccount'">Edit</button>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Jane Smith</td>
+                    <td>jane.smith@university.edu</td>
+                    <td><span class="role-tag role-supervisor">Supervisor</span></td>
+                    <td>
+                        <div class="action-btns">
+                            <button class="edit-btn" onclick="window.location.href='EditAccount'">Edit</button>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Mike Johnson</td>
+                    <td>mike.johnson@university.edu</td>
+                    <td><span class="role-tag role-ta">Teaching Assistant</span></td>
+                    <td>
+                        <div class="action-btns">
+                            <button class="edit-btn" onclick="window.location.href='EditAccount'">Edit</button>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <a href="homePage" class="back-btn">Back to Dashboard</a>
+    </div>
+
+
+</body>
+</html>
