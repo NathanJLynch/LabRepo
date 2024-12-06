@@ -5,7 +5,7 @@ from django.template.context_processors import request
 from django.urls import reverse
 from django.views.generic import TemplateView
 
-from TA_Scheduler.models import Course, UserList, User
+from TA_Scheduler.models import Course, UserList, User, Validator
 
 
 class LoginPageView(TemplateView):
@@ -22,7 +22,7 @@ class CreateAccountPageView(TemplateView):
 
 
     def post(self, request, *args, **kwargs):
-        # Get course details from the POST request
+        # Get account details from the POST request
         name = request.POST.get('full-name')
         email = request.POST.get('course_code')
         password = request.POST.get('password')
@@ -34,7 +34,7 @@ class CreateAccountPageView(TemplateView):
         if name and email and password and role:
             # Create and save a new user
             User.objects.create(name=name, email=email, password=password, role_id=role)
-        # Redirect back to the courses page
+        # Redirect back to the accounts page
         return HttpResponseRedirect(reverse('listAccounts'))
 
 class EditAccountPageView(TemplateView):
