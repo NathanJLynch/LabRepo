@@ -21,7 +21,7 @@ from TA_Scheduler.views import HomePageView
 from TA_Scheduler.views import coursesPageView
 from TA_Scheduler.views import CreateAccountPageView
 from TA_Scheduler.views import EditAccountPageView
-from TA_Scheduler.views import CreateCoursePageView, AssignPageView,NotificationsView,listAccountsView
+from TA_Scheduler.views import CreateCoursePageView, AssignPageView,NotificationsView,listAccountsView,sendNotificationView
 
 urlpatterns = [
     path('', LoginPageView.as_view(), name='LoginPage'),
@@ -35,6 +35,7 @@ urlpatterns = [
     path('Assign', AssignPageView.as_view(), name='Assign'),
     path('Notifications', NotificationsView.as_view(), name='Notifications'),
     path('ListAccounts', listAccountsView.as_view(), name='ListAccounts'),
+    path('sendNotification', sendNotificationView.as_view(), name='sendNotification'),
 
     path('admin/', admin.site.urls),
 ]

@@ -83,4 +83,7 @@ class NotificationsView(TemplateView):
 class listAccountsView(TemplateView):
     template_name = 'listAccounts.html'
 
+class sendNotificationView(TemplateView):
+    template_name = 'sendNotification.html'
+
 # Create your views here.
