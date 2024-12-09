@@ -38,34 +38,19 @@
             margin-bottom: 20px;
         }
 
-        .search-input {
-            flex-grow: 1;
-            padding: 12px;
-            border: 1px solid #e5e7eb;
-            border-radius: 8px 0 0 8px;
-            font-size: 1rem;
-        }
-
-        .search-btn, .create-account-btn {
+        .create-account-btn {
             padding: 12px 20px;
             background: #6366f1;
             color: #fff;
             border: none;
             font-size: 1rem;
             cursor: pointer;
+            border-radius: 8px;
+            margin-left: auto;
             transition: background 0.3s ease;
         }
 
-        .search-btn {
-            border-radius: 0 8px 8px 0;
-        }
-
-        .create-account-btn {
-            border-radius: 8px;
-            margin-left: 10px;
-        }
-
-        .search-btn:hover, .create-account-btn:hover {
+        .create-account-btn:hover {
             background: #4f46e5;
         }
 
@@ -95,26 +80,13 @@
             justify-content: center;
         }
 
-        .view-btn, .edit-btn, .delete-btn {
+        .edit-btn {
             padding: 8px 12px;
             border: none;
             border-radius: 6px;
             font-size: 0.875rem;
             cursor: pointer;
-        }
-
-        .view-btn {
-            background: #10b981;
-            color: white;
-        }
-
-        .edit-btn {
             background: #f59e0b;
-            color: white;
-        }
-
-        .delete-btn {
-            background: #ef4444;
             color: white;
         }
 
@@ -172,43 +144,71 @@
                     <th>Actions</th>
                 </tr>
             </thead>
-            <tbody>
-                <tr>
-                    <td>John Doe</td>
-                    <td>john.doe@university.edu</td>
-                    <td><span class="role-tag role-instructor">Instructor</span></td>
-                    <td>
-                        <div class="action-btns">
-                            <button class="edit-btn" onclick="window.location.href='EditAccount'">Edit</button>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td>Jane Smith</td>
-                    <td>jane.smith@university.edu</td>
-                    <td><span class="role-tag role-supervisor">Supervisor</span></td>
-                    <td>
-                        <div class="action-btns">
-                            <button class="edit-btn" onclick="window.location.href='EditAccount'">Edit</button>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td>Mike Johnson</td>
-                    <td>mike.johnson@university.edu</td>
-                    <td><span class="role-tag role-ta">Teaching Assistant</span></td>
-                    <td>
-                        <div class="action-btns">
-                            <button class="edit-btn" onclick="window.location.href='EditAccount'">Edit</button>
-                        </div>
-                    </td>
-                </tr>
+            <tbody id="accounts-table-body">
+                <!-- Rows will be dynamically populated -->
             </tbody>
         </table>
 
         <a href="homePage" class="back-btn">Back to Dashboard</a>
     </div>
 
+    <script>
+        // Function to populate the accounts table with data
+        async function fetchAccounts() {
+            try {
+                // Replace with the actual endpoint for fetching user accounts
+                const response = await fetch('/api/accounts');
 
+                if (!response.ok) {
+                    throw new Error('Failed to fetch accounts');
+                }
+
+                const accounts = await response.json();
+
+                // Clear any existing rows
+                const tableBody = document.getElementById('accounts-table-body');
+                tableBody.innerHTML = '';
+
+                // Add a row for each account
+                accounts.forEach(account => {
+                    const row = document.createElement('tr');
+
+                    row.innerHTML = `
+                        <td>${account.name}</td>
+                        <td>${account.email}</td>
+                        <td>
+                            <span class="role-tag ${getRoleClass(account.role)}">${account.role}</span>
+                        </td>
+                        <td>
+                            <div class="action-btns">
+                                <button class="edit-btn" onclick="editAccount(${account.id})">Edit</button>
+                            </div>
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            } catch (error) {
+                console.error('Error fetching accounts:', error);
+            }
+        }
+
+        // Helper function to determine role class
+        function getRoleClass(role) {
+            switch (role.toLowerCase()) {
+                case 'supervisor': return 'role-supervisor';
+                case 'instructor': return 'role-instructor';
+                case 'ta': return 'role-ta';
+                default: return '';
+            }
+        }
+
+        // Function to handle editing an account
+        function editAccount(accountId) {
+            window.location.href = `EditAccount?id=${accountId}`;
+        }
+
+        // Fetch accounts on page load
+        fetchAccounts();
+    </script>
 </body>
 </html>
