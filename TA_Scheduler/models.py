@@ -11,9 +11,9 @@ from django.db import models
 # - SectionList Class may not be needed
 ## End Notes ##
 
-# class Section(models.Model):
+class Section(models.Model):
 #     # (-2 for initialization)
-#     section_id = models.IntegerField(primary_key=True) #section number going from 0, each course will start from 0
+    section_id = models.IntegerField(primary_key=True) #section number going from 0, each course will start from 0
 #     section_type = models.CharField(max_length=7) #specification of section
 #
 #     def __init__(self, section_id, section_type):
@@ -63,20 +63,26 @@ class Role(models.Model):
 
 
 class User(models.Model):
+    ROLES = (
+        ('admin', 'admin'),
+        ('instructor', 'instructor'),
+        ('TA', 'TA')
+    )
     #user_id = models.IntegerField(primary_key=True)
     #first_name = models.CharField(max_length=15)
     #last_name = models.CharField(max_length=15)
-    full_name = models.CharField(max_length=50)
+    full_name = models.CharField(max_length=50, primary_key=True)
     email = models.CharField(max_length=50)
     password = models.CharField(max_length=25)
     #phone_number = models.CharField(max_length=13)
-    role_id = models.IntegerField()
+    role_id = models.CharField(max_length=10, choices = ROLES, default='admin')
     is_active = models.BooleanField(default=False)# not sure how this will work yet
 
-    def __init__(self, full_name, email, password, role_id):
+    def __init__(self, full_name, email, password, role_id, *args, **kwargs):
         #self.user_id = user_id
         #self.first_name = first_name
         #self.last_name = last_name
+        super().__init__(*args, **kwargs)
         self.full_name = full_name
         self.email = email
         self.password = password
@@ -117,8 +123,8 @@ class User(models.Model):
 
 
 # Data Structure Classes
-# class SectionList(models.Model):
-#     section_list = []
+class SectionList(models.Model):
+    section_list = []
 #
 #     def add_Section(self, section):
 #         self.section_list.append(section)
@@ -130,8 +136,8 @@ class User(models.Model):
 #         self.save()
 #         return True
 #
-# class CourseList(models.Model):
-#     course_list = []
+class courseList(models.Model):
+        course_list = []
 #     TestS = Section(0, "Lecture")
 #     TestC = Course(0, "CS361", [TestS])
 #     print(TestC)
