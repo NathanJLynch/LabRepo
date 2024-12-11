@@ -62,17 +62,16 @@ class User(models.Model):
     role_id = models.CharField(max_length=10, choices = ROLES, default='admin')
     is_active = models.BooleanField(default=False)# not sure how this will work yet
 
-    def __init__(self, full_name, email, password, role_id, *args, **kwargs):
-        #self.user_id = user_id
-        #self.first_name = first_name
-        #self.last_name = last_name
-        super().__init__(*args, **kwargs)
-        self.full_name = full_name
-        self.email = email
-        self.password = password
-        #self.phone_number = phone_number
-        self.role_id = role_id
-        self.is_active = False
+    def __str__(self):
+        return self.full_name
+    # def __init__(self, full_name, email, password, role_id, *args, **kwargs):
+    #     super().__init__(*args, **kwargs)
+    #     self.full_name = full_name
+    #     self.email = email
+    #     self.password = password
+    #     #self.phone_number = phone_number
+    #     self.role_id = role_id
+    #     self.is_active = False
 
     def change_email(self, new_email):
         self.email = new_email

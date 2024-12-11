@@ -1,15 +1,29 @@
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib import messages
 from django.http import HttpResponseRedirect
-from django.shortcuts import render, redirect
+from django.shortcuts import redirect
 from django.template.context_processors import request
 from django.urls import reverse
 from django.views.generic import TemplateView
-
 from TA_Scheduler.models import Course, UserList, User, Validator
 
 
 class LoginPageView(TemplateView):
     template_name = 'LoginPage.html'
+
+    def post(self, request, *args, **kwargs):
+        if request.method == 'POST':
+            user_full_name = request.POST['full_name']
+            user_password = request.POST['password']
+            try:
+                user = User.objects.get(full_name=user_full_name)
+                if user.password == user_password:
+                    return redirect('homePage')
+                else:
+                    messages.error(request, 'Incorrect username or password')
+                    return redirect('LoginPage')
+            except User.DoesNotExist:
+                messages.error(request, 'Incorrect username or password')
+                return redirect('LoginPage')
 
 
 class HomePageView(TemplateView):
