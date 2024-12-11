@@ -66,10 +66,10 @@ class CreateCoursePageView(TemplateView):
         course_name = request.POST.get('course_name')
         course_code= request.POST.get('course_code')
         course_sem = request.POST.get('course_sem')
-        # course_instructor = request.POST.get('course_instructor')
+        course_instructor = request.POST.get('course_instructor')
         if course_name and course_code and course_sem :
             # Create and save a new course
-            Course.objects.create(course_name=course_name, course_code=course_code, course_sem= course_sem)
+            Course.objects.create(course_name=course_name, course_code=course_code, course_sem= course_sem, course_instructor = course_instructor)
         # Redirect back to the courses page
         return HttpResponseRedirect(reverse('courses'))
 
