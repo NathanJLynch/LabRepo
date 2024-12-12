@@ -218,16 +218,24 @@ class Course(models.Model):
     course_name = models.CharField(max_length=50, unique=True)  # name of the course
     course_code = models.CharField(max_length=15, unique=True, null=True)  # course code
     course_sem = models.CharField(max_length=20, null=True)  # course sem
-    course_instructor = models.CharField(max_length=50, null=True)
+    course_instructor = models.CharField(max_length=50, null=True) # course instuctor
+    start_time = models.TimeField(null=True)  # start time of the course
+    end_time = models.TimeField(null=True)  # end time of the course
+    days = models.CharField(max_length=50, null=True)
+    date = models.DateField(null=True)
 
     def __str__(self):
             return self.course_name
 
-    def change_CourseName(self, course_name, course_code, course_sem, course_instructor):
+    def change_CourseName(self, course_name, course_code, course_sem, course_instructor,start_time,end_time,days,date):
         self.course_name = course_name
         self.course_code = course_code
         self.course_sem = course_sem
         self.course_instructor = course_instructor
+        self.start_time = start_time
+        self.end_time = end_time
+        self.days = days
+        self.date = date
         self.save()
         return True
 

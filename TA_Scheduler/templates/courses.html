@@ -121,7 +121,14 @@
                     </tr>
                 </thead>
                 <tbody id="schedule-body">
-                    <!-- dynamically process stuff here -->
+                     {% for course in upcoming_courses %}
+                        <tr>
+                            <td>{{ course.date }}</td>
+                            <td>{{ course.start_time }} - {{ course.end_time }}</td>
+                            <td>{{ course.course_name }}</td>
+                            <td>{{ course.type }}</td>
+                        </tr>
+                    {% endfor %}
                 </tbody>
             </table>
         </div>
@@ -135,6 +142,9 @@
                         <th>Course Code</th>
                         <th>Course Name</th>
                         <th>Semester</th>
+                        <th>Days</th>
+                        <th>Start Time</th>
+                        <th>End Time</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -152,6 +162,9 @@
                             {% else %}
                             <td>Unknown </td>
                             {% endif %}
+                            <td>{{ course.days }}</td>
+                            <td>{{ course.start_time }}</td>
+                            <td>{{ course.end_time }}</td>
                             <td>
                                 <div class="action-btns">
                                     <button class="assign-btn" onclick="window.location.href='Assign'">Assign</button>
