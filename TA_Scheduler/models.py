@@ -223,10 +223,22 @@ class Course(models.Model):
     def __str__(self):
             return self.course_name
 
-    def change_CourseName(self, course_name, course_code, course_sem, course_instructor):
+    def change_CourseName(self, course_name):
         self.course_name = course_name
+        self.save()
+        return True
+    
+    def change_CourseCode(self, course_code):
         self.course_code = course_code
+        self.save()
+        return True
+    
+    def change_CourseSem(self, course_sem):
         self.course_sem = course_sem
+        self.save()
+        return True
+    
+    def change_CourseInstructor(self, course_instructor):
         self.course_instructor = course_instructor
         self.save()
         return True
