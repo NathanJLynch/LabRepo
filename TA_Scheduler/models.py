@@ -58,7 +58,7 @@ class User(models.Model):
     full_name = models.CharField(max_length=50, primary_key=True)
     email = models.CharField(max_length=50)
     password = models.CharField(max_length=25)
-    #phone_number = models.CharField(max_length=13)
+    phone = models.IntegerField()
     role_id = models.CharField(max_length=10, choices = ROLES, default='admin')
     is_active = models.BooleanField(default=False)# not sure how this will work yet
 
