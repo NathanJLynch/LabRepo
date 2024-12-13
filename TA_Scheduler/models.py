@@ -169,8 +169,30 @@ class UserList(models.Model):
         self.save()
         return True
 
-class EmailList(models.Model):
-    email_list = []
+class CheckPermissions(models.Model):
+
+    def check_create_delete_permissions(self, user):
+        permissible = ["Admin", "Supervisor"]
+
+        if user.role_id in permissible:
+            return True
+        return False
+
+    def check_edit_user_permissions(self, user, edited_user):
+        permissible = ["Admin", "Supervisor"]
+        if user == edited_user:
+            return True
+        if user.role_id in permissible:
+            return True
+        return False
+
+    def check_edit_course_permissions(self, user, course):
+        permissible = ["Admin", "Supervisor"]
+        if user.role_id == "Teacher" and course.course_instructor == user:
+            return True
+        if user.role_id in permissible:
+            return True
+        return False
 
 
 class Validator(models.Model):
@@ -198,7 +220,7 @@ class Validator(models.Model):
                 and Validator.contains_Letter(self, password) and
                 Validator.contains_Number(self, password))
 
-    def validate_Email(self, email):
+    def validate_Email(self, email, emails_list):
         emails_substr = ["uwm.edu","gmail.com"]
         if '@' not in email or ' ' in email or len(email) < 6 or len(email) > 50:
             return False
@@ -208,10 +230,22 @@ class Validator(models.Model):
         if not a or Validator.contains_Special(self, a):
             return False
 
-        if b in emails_substr and email not in EmailList.email_list:
-            EmailList.email_list.append(email)
+        if b in emails_substr and email not in emails_list:
             return True
         return False
+
+    def validate_phone(self, phone, phone_list):
+        if len(phone) != 10:
+            return False
+
+        if Validator.contains_Special(self, phone) or Validator.contains_Letter(self, phone):
+            return False
+
+        if phone not in phone_list:
+            return True
+        return False
+
+
 
 class Course(models.Model):
     course_id = models.IntegerField(primary_key=True)
