@@ -16,6 +16,16 @@ class HelperTests(TestCase):
         self.assertEqual(False, Validator.contains_Special(self, "hello"))
         self.assertEqual(True, Validator.contains_Special(self, "!  hello"))
 
+    def test_containts_number(self):
+        self.assertEqual(True, Validator.contains_Number(self, "12asdf"))
+        self.assertEqual(False, Validator.contains_Number(self, "asdf"))
+        self.assertEqual(True, Validator.contains_Number(self, "123 asdf"))
+
+    def test_contains_letter(self):
+        self.assertEqual(True, Validator.contains_Letter(self, "hello"))
+        self.assertEqual(False, Validator.contains_Letter(self, "1234565"))
+        self.assertEqual(True, Validator.contains_Letter(self, "as  df"))
+
 class EmailValidatorTests(TestCase):
     def setUp(self):
         pass

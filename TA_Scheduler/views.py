@@ -7,7 +7,7 @@ from django.template.context_processors import request
 from django.urls import reverse
 from django.utils.timezone import now, timedelta
 from django.views.generic import TemplateView
-from TA_Scheduler.models import Course, UserList, User, Validator
+from TA_Scheduler.models import Course, UserList, User, Validator, CheckPermissions
 
 
 class LoginPageView(TemplateView):
@@ -59,9 +59,10 @@ class EditAccountPageView(TemplateView):
 
     def post(self, request, *args, **kwargs):
 
-        #check permission
 
-        editeduser = User.objects.get(pk=request.user.id)
+        editeduser = User.objects.get(full_name=request.POST['full-name'])
+
+        #check permissions
 
         name = request.POST.get('full-name')
         email = request.POST.get('email')
