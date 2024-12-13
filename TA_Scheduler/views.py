@@ -57,6 +57,39 @@ class CreateAccountPageView(TemplateView):
 class EditAccountPageView(TemplateView):
     template_name = 'edit-account.html'
 
+    def post(self, request, *args, **kwargs):
+
+        #check permission
+
+        editeduser = User.objects.get(pk=request.user.id)
+
+        name = request.POST.get('full-name')
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        phone = request.POST.get('phone')
+        role = request.POST.get('role')
+
+        phones_list = User.objects.all().values_list('phone', flat=True)
+        emails_list = User.objects.all().values_list('email', flat=True)
+
+        if(name):
+            editeduser.name = name
+        if(email and Validator.validate_Email(self, email, emails_list)):
+
+            editeduser.email = email
+        if(password and Validator.validate_Password(self, password)):
+            editeduser.password = password
+
+        if(phone and Validator.validate_phone(self, phone, phones_list)):
+            editeduser.phone = phone
+
+        if(role):
+            editeduser.role_id = role
+
+        editeduser.save()
+
+
+
 
 class coursesPageView(TemplateView):
     template_name = 'courses.html'
