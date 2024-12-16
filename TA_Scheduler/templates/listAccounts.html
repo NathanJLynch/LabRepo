@@ -23,7 +23,7 @@
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
             padding: 30px;
             width: 100%;
-            max-width: 900px;
+            max-width: 1200px;
             text-align: center;
         }
 
@@ -125,6 +125,21 @@
             background: #f59e0b;
             color: white;
         }
+
+        .skills-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            justify-content: center;
+        }
+
+        .skill-tag {
+            background: #e5e7eb;
+            color: #1f2937;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+        }
     </style>
 </head>
 <body>
@@ -140,7 +155,9 @@
                 <tr>
                     <th>Name</th>
                     <th>Email</th>
+                    <th>Phone</th>
                     <th>Role</th>
+                    <th>Skills</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -173,12 +190,23 @@
                 accounts.forEach(account => {
                     const row = document.createElement('tr');
 
+                    // Convert skills to skill tags HTML
+                    const skillsHtml = account.skills ?
+                        `<div class="skills-list">
+                            ${account.skills.map(skill =>
+                                `<span class="skill-tag">${skill}</span>`
+                            ).join('')}
+                         </div>` :
+                        '<span>No skills listed</span>';
+
                     row.innerHTML = `
                         <td>${account.name}</td>
                         <td>${account.email}</td>
+                        <td>${account.phone || 'N/A'}</td>
                         <td>
                             <span class="role-tag ${getRoleClass(account.role)}">${account.role}</span>
                         </td>
+                        <td>${skillsHtml}</td>
                         <td>
                             <div class="action-btns">
                                 <button class="edit-btn" onclick="editAccount(${account.id})">Edit</button>
@@ -192,7 +220,6 @@
             }
         }
 
-        // Helper function to determine role class
         function getRoleClass(role) {
             switch (role.toLowerCase()) {
                 case 'supervisor': return 'role-supervisor';
