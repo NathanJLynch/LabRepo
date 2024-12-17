@@ -72,16 +72,16 @@ class PhoneValidatorTests(TestCase):
         pass
 
     def test_valid_phone(self):
-        phone_list = ["9204192382", "1234567890"]
+        phone_list = [9204192382, 1234567890]
 
-        self.assertEqual(True, Validator.validate_phone(self, "0987654321", phone_list))
+        self.assertEqual(True, Validator.validate_phone(self, 1987654321, phone_list))
 
     def test_invalid_phone(self):
-        phone_list = ["9204192382", "1234567890"]
-        self.assertEqual(False, Validator.validate_phone(self, "123456789", phone_list))
-        self.assertEqual(False, Validator.validate_phone(self, "&123456789", phone_list))
-        self.assertEqual(False, Validator.validate_phone(self, "a123456789", phone_list))
+        phone_list = [9204192382, 1234567890]
+        self.assertEqual(False, Validator.validate_phone(self, 123456789, phone_list))
+        self.assertEqual(False, Validator.validate_phone(self, 12345678900, phone_list))
+        self.assertEqual(False, Validator.validate_phone(self,  0, phone_list))
 
     def test_repeated_phone(self):
-        phone_list = ["9204192382", "1234567890"]
-        self.assertEqual(False, Validator.validate_phone(self, "9204192382", phone_list))
+        phone_list = [9204192382, 1234567890]
+        self.assertEqual(False, Validator.validate_phone(self, 9204192382, phone_list))

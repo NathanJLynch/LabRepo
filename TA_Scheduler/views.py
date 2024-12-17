@@ -61,14 +61,14 @@ class CreateAccountPageView(TemplateView):
         name = request.POST.get('full-name')
         email = request.POST.get('course_code')
         password = request.POST.get('password')
-        # phone = request.POST.get('phone')
+        phone = request.POST.get('phone')
         role = request.POST.get('role')
 
         User.objects.create(name=name, email=email, password=password, role_id=role)
 
         if name and email and password and role:
             # Create and save a new user
-            User.objects.create(name=name, email=email, password=password, role_id=role)
+            User.objects.create(name=name, email=email, password=password, phone=phone, role_id=role)
         # Redirect back to the accounts page
         return HttpResponseRedirect(reverse('listAccounts'))
 

@@ -235,11 +235,11 @@ class Validator(models.Model):
         return False
 
     def validate_phone(self, phone, phone_list):
-        if len(phone) != 10:
+        if len(str(phone)) != 10:
             return False
 
-        if Validator.contains_Special(self, phone) or Validator.contains_Letter(self, phone):
-            return False
+        #if Validator.contains_Special(self, phone) or Validator.contains_Letter(self, phone):
+            #return False
 
         if phone not in phone_list:
             return True
