@@ -121,7 +121,14 @@
                     </tr>
                 </thead>
                 <tbody id="schedule-body">
-                    <!-- dynamically process stuff here -->
+                     {% for course in upcoming_courses %}
+                        <tr>
+                            <td>{{ course.date }}</td>
+                            <td>{{ course.start_time }} - {{ course.end_time }}</td>
+                            <td>{{ course.course_name }}</td>
+                            <td>{{ course.type }}</td>
+                        </tr>
+                    {% endfor %}
                 </tbody>
             </table>
         </div>
@@ -135,11 +142,43 @@
                         <th>Course Code</th>
                         <th>Course Name</th>
                         <th>Semester</th>
+                        <th>Days</th>
+                        <th>Start Time</th>
+                        <th>End Time</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody id="courses-body">
-                    <!-- dynamically process stuff here-->
+                    {% for course in courses %}
+                        <tr>
+                            <td>{{ course.course_code }}</td>
+                            <td>{{ course.course_name }}</td>
+                            {% if course.course_sem == "fall-2024" %}
+                            <td>Fall 2024</td>
+                            {% elif course.course_sem == "spring-2025" %}
+                            <td>Spring 2025</td>
+                            {% elif course.course_sem == "summer-2025" %}
+                            <td>Summer 2025</td>
+                            {% else %}
+                            <td>Unknown </td>
+                            {% endif %}
+                            <td>{{ course.days }}</td>
+                            <td>{{ course.start_time }}</td>
+                            <td>{{ course.end_time }}</td>
+                            <td>
+                                <div class="action-btns">
+                                    <button class="assign-btn" onclick="window.location.href='Assign'">Assign</button>
+                                    <form method="post" style="display:inline;">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="delete_course_id" value="{{ course.course_id }}">
+                                    <button type="submit" class="delete-btn">Delete</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+
+                    {% endfor %}
                 </tbody>
             </table>
             <button class="create-course-btn" onclick="window.location.href='CreateCourse'">+ Create Course</button>
@@ -189,7 +228,7 @@
                     row.innerHTML = `
                         <td>${course.code}</td>
                         <td>${course.name}</td>
-                        <td>${course.semester}</td>
+                        <td>${course.sem}</td>
                         <td>
                             <div class="action-btns">
                                 <button class="assign-btn" onclick="assignCourse(${course.id})">Assign</button>
