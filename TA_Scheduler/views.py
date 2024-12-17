@@ -77,10 +77,11 @@ class EditAccountPageView(TemplateView):
 
     def post(self, request, *args, **kwargs):
 
-
+        current_user = request.user
         editeduser = User.objects.get(full_name=request.POST['full-name'])
 
         #check permissions
+        CheckPermissions.check_edit_user_permissions(self, current_user, editeduser)
 
         name = request.POST.get('full-name')
         email = request.POST.get('email')
@@ -92,20 +93,21 @@ class EditAccountPageView(TemplateView):
         emails_list = User.objects.all().values_list('email', flat=True)
 
         if(name):
-            editeduser.name = name
+            editeduser.change_name(self, name)
         if(email and Validator.validate_Email(self, email, emails_list)):
 
-            editeduser.email = email
+            editeduser.change_email(self, email)
         if(password and Validator.validate_Password(self, password)):
-            editeduser.password = password
+            editeduser.change_password(self, password)
 
         if(phone and Validator.validate_phone(self, phone, phones_list)):
-            editeduser.phone = phone
+            editeduser.change_phone(self, phone)
 
         if(role):
-            editeduser.role_id = role
+            editeduser.change_role(self, role)
 
-        editeduser.save()
+
+        return HttpResponseRedirect(reverse('listAccounts'))
 
 
 
@@ -178,6 +180,8 @@ class CreateCoursePageView(TemplateView):
     template_name = 'create-course.html'
 
     def post(self, request, *args, **kwargs):
+        #ensure user has permission
+        CheckPermissions.check_create_delete_permissions(self, request.user)
         # Get course details from the POST request
         course_name = request.POST.get('course_name')
         course_code= request.POST.get('course_code')
