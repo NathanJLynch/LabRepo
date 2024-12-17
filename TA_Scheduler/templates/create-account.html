@@ -94,18 +94,26 @@
             margin-top: 15px;
             display: none;
         }
+        .invalid_message{
+            list-style-type: none;
+            color: #7f1d1d;
+            background: #fecaca;
+            border: 1px solid #fca5a5;
+            margin-top: 15px;
+        }
     </style>
 </head>
 <body>
     <div class="create-account-container">
         <h1>Create Account</h1>
         <p>Set up a new user account</p>
-        <form id="create-account-form">
-            <input type="text" id="full-name" class="form-input" placeholder="Full Name" required>
-            <input type="email" id="email" class="form-input" placeholder="Email Address" required>
-            <input type="password" id="password" class="form-input" placeholder="Password" required>
+        <form id="create-account-form" method = "post">
+            {% csrf_token %}
+            <input type="text" name = "full-name" id="full-name" class="form-input" placeholder="Full Name" required>
+            <input type="email" name = "email" id="email" class="form-input" placeholder="Email Address" required>
+            <input type="password" name = "password" id="password" class="form-input" placeholder="Password" required>
             <input type="password" id="confirm-password" class="form-input" placeholder="Confirm Password" required>
-            <select id="user-role" class="form-select" required>
+            <select id="user-role" name = "role_id" class="form-select" required>
                 <option value="">Select User Role</option>
                 <option value="supervisor">Supervisor</option>
                 <option value="instructor">Instructor</option>
@@ -113,8 +121,17 @@
             </select>
             <button type="submit" class="create-btn">Create Account</button>
         </form>
+        {% if messages %}
+                <div class="messages">
+                    {% for message in messages %}
+                        <div class = invalid_message>
+                            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
         <div id="error-message" class="error-message"></div>
-        <a href="LoginPage" class="cancel-link">Cancel</a>
+        <a href="homePage" class="cancel-link">Cancel</a>
     </div>
 
     <script>
@@ -122,7 +139,6 @@
         const errorMessage = document.getElementById('error-message');
 
         form.addEventListener('submit', function(e) {
-            e.preventDefault();
             const password = document.getElementById('password').value;
             const confirmPassword = document.getElementById('confirm-password').value;
             const role = document.getElementById('user-role').value;

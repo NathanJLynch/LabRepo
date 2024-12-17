@@ -1,6 +1,7 @@
 
 
 from django.contrib import messages
+from django.db import IntegrityError
 from django.http import HttpResponseRedirect
 from django.shortcuts import redirect
 from django.template.context_processors import request
@@ -31,6 +32,23 @@ class LoginPageView(TemplateView):
 
 class HomePageView(TemplateView):
     template_name = 'homePage.html'
+
+    def post(self, request, *args, **kwargs):
+        # Get account details from the POST request
+        name = request.POST.get('full-name')
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        # phone = request.POST.get('phone')
+        role = request.POST.get('role_id')
+        if name and email and password and role:
+            try:
+                # Create and save a new user
+                User.objects.create(full_name=name, email=email, password=password, role_id=role)
+            except IntegrityError:
+                messages.error(request, 'Account already exists')
+                return redirect('CreateAccount')
+            # Redirect back to the accounts page
+        return HttpResponseRedirect(reverse('ListAccounts'))
 
 
 class CreateAccountPageView(TemplateView):
