@@ -11,9 +11,9 @@ from TA_Scheduler.models import Course, User
 class TestAccountCreation(TestCase):
 
     def setUp(self):
-        self.full_name = 'Nathan'
+        self.full_name = 'Nathan Lynch'
         self.email = 'nathan@uwm.edu'
-        self.password = 'Qwerty12345'
+        self.password = 'Qwerty12345!'
         self.role = 'admin'
 
     def test_create_account(self):
