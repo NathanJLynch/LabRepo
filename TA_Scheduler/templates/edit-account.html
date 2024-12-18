@@ -1,5 +1,3 @@
-<!--test-->
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -100,6 +98,49 @@
             margin-top: 15px;
             display: none;
         }
+
+        #skills-container {
+            display: none;
+            margin-bottom: 15px;
+        }
+
+        .skills-input-container {
+            display: flex;
+            margin-bottom: 10px;
+        }
+
+        #skills-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-bottom: 10px;
+        }
+
+        .skill-tag {
+            background: #e5e7eb;
+            color: #1f2937;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .skill-tag-close {
+            margin-left: 5px;
+            cursor: pointer;
+            color: #6b7280;
+        }
+
+        .add-skill-btn {
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            margin-left: 10px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -117,6 +158,15 @@
                 <option value="supervisor">Supervisor</option>
                 <option value="ta">Teaching Assistant</option>
             </select>
+
+            <div id="skills-container">
+                <div class="skills-input-container">
+                    <input type="text" id="skill-input" class="form-input" placeholder="Enter a skill">
+                    <button type="button" id="add-skill-btn" class="add-skill-btn">Add</button>
+                </div>
+                <div id="skills-list"></div>
+            </div>
+
             <button type="submit" class="save-btn">Save Changes</button>
             <button type="button" class="cancel-btn" onclick="window.location.href='homePage'">Cancel</button>
         </form>
@@ -126,28 +176,140 @@
     <script>
         const form = document.getElementById('edit-account-form');
         const errorMessage = document.getElementById('error-message');
+        const roleSelect = document.getElementById('user-role');
+        const skillsContainer = document.getElementById('skills-container');
+        const skillInput = document.getElementById('skill-input');
+        const addSkillBtn = document.getElementById('add-skill-btn');
+        const skillsList = document.getElementById('skills-list');
 
+        // Initial setup based on current role
+        function setupSkillsForRole() {
+            const currentRole = roleSelect.value;
+            if (currentRole === 'ta') {
+                skillsContainer.style.display = 'block';
+                // TODO: Fetch and populate existing skills for the TA
+                populateExistingSkills();
+            } else {
+                skillsContainer.style.display = 'none';
+                skillsList.innerHTML = '';
+            }
+        }
+
+        // Populate existing skills (placeholder - replace with actual data fetching)
+        function populateExistingSkills() {
+            // Example: If editing an existing TA, you might fetch their skills from the backend
+            const existingSkills = ['Python', 'Machine Learning', 'Data Structures'];
+
+            existingSkills.forEach(skill => {
+                const skillTag = document.createElement('div');
+                skillTag.className = 'skill-tag';
+
+                const skillText = document.createElement('span');
+                skillText.textContent = skill;
+
+                const closeBtn = document.createElement('span');
+                closeBtn.textContent = '×';
+                closeBtn.className = 'skill-tag-close';
+                closeBtn.addEventListener('click', function() {
+                    skillsList.removeChild(skillTag);
+                });
+
+                skillTag.appendChild(skillText);
+                skillTag.appendChild(closeBtn);
+
+                skillsList.appendChild(skillTag);
+            });
+        }
+
+        // Initial setup when page loads
+        setupSkillsForRole();
+
+        // Toggle skills input based on role selection
+        roleSelect.addEventListener('change', setupSkillsForRole);
+
+        // Add skill functionality
+        addSkillBtn.addEventListener('click', function() {
+            const skillValue = skillInput.value.trim();
+
+            if (skillValue && !isDuplicateSkill(skillValue)) {
+                // Create skill tag
+                const skillTag = document.createElement('div');
+                skillTag.className = 'skill-tag';
+
+                const skillText = document.createElement('span');
+                skillText.textContent = skillValue;
+
+                const closeBtn = document.createElement('span');
+                closeBtn.textContent = '×';
+                closeBtn.className = 'skill-tag-close';
+                closeBtn.addEventListener('click', function() {
+                    skillsList.removeChild(skillTag);
+                });
+
+                skillTag.appendChild(skillText);
+                skillTag.appendChild(closeBtn);
+
+                skillsList.appendChild(skillTag);
+                skillInput.value = ''; // Clear input
+            }
+        });
+
+        // Prevent duplicate skills
+        function isDuplicateSkill(newSkill) {
+            const existingSkills = Array.from(skillsList.children)
+                .map(tag => tag.textContent.slice(0, -1).trim());
+            return existingSkills.includes(newSkill);
+        }
+
+        // Handle form submission
         form.addEventListener('submit', function(e) {
             e.preventDefault();
             const currentPassword = document.getElementById('current-password').value;
             const newPassword = document.getElementById('new-password').value;
             const confirmNewPassword = document.getElementById('confirm-new-password').value;
+            const role = document.getElementById('user-role').value;
 
+            // Password validation
             if (newPassword !== confirmNewPassword) {
                 errorMessage.style.display = 'block';
                 errorMessage.textContent = 'New passwords do not match.';
                 return;
             }
 
+            // Check current password (replace with actual backend validation)
             if (currentPassword !== 'password') {
                 errorMessage.style.display = 'block';
                 errorMessage.textContent = 'Current password is incorrect.';
                 return;
             }
 
+            // If role is TA, check if skills are added
+            if (role === 'ta' && skillsList.children.length === 0) {
+                errorMessage.style.display = 'block';
+                errorMessage.textContent = 'Please add at least one skill for Teaching Assistants.';
+                return;
+            }
+
+            // Collect skills if TA
+            let skills = [];
+            if (role === 'ta') {
+                skills = Array.from(skillsList.children)
+                    .map(tag => tag.textContent.slice(0, -1).trim());
+            }
+
             errorMessage.style.display = 'none';
             alert('Account Updated Successfully!');
-            window.location.href = 'homePage';
+
+            // send the data to your backend
+            // Including the skills array for TAs
+            window.location.href = 'home.html';
+        });
+
+        skillInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                addSkillBtn.click();
+            }
         });
     </script>
 </body>
