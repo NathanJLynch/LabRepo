@@ -148,13 +148,13 @@
         <h1>Edit Account</h1>
         <p>Update your account information</p>
         <form id="edit-account-form">
-            <input type="text" id="full-name" class="form-input" placeholder="Full Name" value="John Doe" required>
-            <input type="email" id="email" class="form-input" placeholder="Email Address" value="john.doe@university.edu" required>
+            <input type="text" id="full-name" class="form-input" placeholder="Full Name" required>
+            <input type="email" id="email" class="form-input" placeholder="Email Address" required>
             <input type="password" id="current-password" class="form-input" placeholder="Current Password" required>
             <input type="password" id="new-password" class="form-input" placeholder="New Password (optional)">
             <input type="password" id="confirm-new-password" class="form-input" placeholder="Confirm New Password">
             <select id="user-role" class="form-select" required>
-                <option value="instructor" selected>Instructor</option>
+                <option value="instructor">Instructor</option>
                 <option value="supervisor">Supervisor</option>
                 <option value="ta">Teaching Assistant</option>
             </select>
@@ -174,143 +174,64 @@
     </div>
 
     <script>
-        const form = document.getElementById('edit-account-form');
-        const errorMessage = document.getElementById('error-message');
-        const roleSelect = document.getElementById('user-role');
-        const skillsContainer = document.getElementById('skills-container');
-        const skillInput = document.getElementById('skill-input');
-        const addSkillBtn = document.getElementById('add-skill-btn');
-        const skillsList = document.getElementById('skills-list');
 
-        // Initial setup based on current role
-        function setupSkillsForRole() {
-            const currentRole = roleSelect.value;
-            if (currentRole === 'ta') {
-                skillsContainer.style.display = 'block';
-                // TODO: Fetch and populate existing skills for the TA
-                populateExistingSkills();
-            } else {
-                skillsContainer.style.display = 'none';
-                skillsList.innerHTML = '';
+        const skillsArray = Array.from(document.querySelectorAll('.skill-tag span'))
+    .map(span => span.textContent);
+document.querySelector('form').addEventListener('submit', function(e) {
+    const skillsInput = document.createElement('input');
+    skillsInput.type = 'hidden';
+    skillsInput.name = 'skills[]';
+    skillsInput.value = JSON.stringify(skillsArray);
+    this.appendChild(skillsInput);
+});
+        document.addEventListener("DOMContentLoaded", async function () {
+            const urlParams = new URLSearchParams(window.location.search);
+            const userId = urlParams.get("id");
+
+            if (userId) {
+                try {
+                    const response = await fetch(`/api/accounts/${userId}`);
+                    if (!response.ok) {
+                        throw new Error("Failed to fetch account data");
+                    }
+                    const user = await response.json();
+
+                    document.getElementById("full-name").value = user.full_name || "";
+                    document.getElementById("email").value = user.email || "";
+                    document.getElementById("user-role").value = user.role_id.toLowerCase();
+
+                    if (user.role_id.toLowerCase() === "ta") {
+                        document.getElementById("skills-container").style.display = "block";
+                        populateExistingSkills(user.skills || []);
+                    }
+                } catch (error) {
+                    console.error("Error fetching user data:", error);
+                }
             }
-        }
+        });
 
-        // Populate existing skills (placeholder - replace with actual data fetching)
-        function populateExistingSkills() {
-            // Example: If editing an existing TA, you might fetch their skills from the backend
-            const existingSkills = ['Python', 'Machine Learning', 'Data Structures'];
-
+        async function populateExistingSkills(existingSkills) {
+            const skillsList = document.getElementById("skills-list");
+            skillsList.innerHTML = "";
             existingSkills.forEach(skill => {
-                const skillTag = document.createElement('div');
-                skillTag.className = 'skill-tag';
+                const skillTag = document.createElement("div");
+                skillTag.className = "skill-tag";
 
-                const skillText = document.createElement('span');
+                const skillText = document.createElement("span");
                 skillText.textContent = skill;
 
-                const closeBtn = document.createElement('span');
-                closeBtn.textContent = '×';
-                closeBtn.className = 'skill-tag-close';
-                closeBtn.addEventListener('click', function() {
+                const closeBtn = document.createElement("span");
+                closeBtn.textContent = "×";
+                closeBtn.className = "skill-tag-close";
+                closeBtn.addEventListener("click", function () {
                     skillsList.removeChild(skillTag);
                 });
 
                 skillTag.appendChild(skillText);
                 skillTag.appendChild(closeBtn);
-
                 skillsList.appendChild(skillTag);
             });
         }
-
-        // Initial setup when page loads
-        setupSkillsForRole();
-
-        // Toggle skills input based on role selection
-        roleSelect.addEventListener('change', setupSkillsForRole);
-
-        // Add skill functionality
-        addSkillBtn.addEventListener('click', function() {
-            const skillValue = skillInput.value.trim();
-
-            if (skillValue && !isDuplicateSkill(skillValue)) {
-                // Create skill tag
-                const skillTag = document.createElement('div');
-                skillTag.className = 'skill-tag';
-
-                const skillText = document.createElement('span');
-                skillText.textContent = skillValue;
-
-                const closeBtn = document.createElement('span');
-                closeBtn.textContent = '×';
-                closeBtn.className = 'skill-tag-close';
-                closeBtn.addEventListener('click', function() {
-                    skillsList.removeChild(skillTag);
-                });
-
-                skillTag.appendChild(skillText);
-                skillTag.appendChild(closeBtn);
-
-                skillsList.appendChild(skillTag);
-                skillInput.value = ''; // Clear input
-            }
-        });
-
-        // Prevent duplicate skills
-        function isDuplicateSkill(newSkill) {
-            const existingSkills = Array.from(skillsList.children)
-                .map(tag => tag.textContent.slice(0, -1).trim());
-            return existingSkills.includes(newSkill);
-        }
-
-        // Handle form submission
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-            const currentPassword = document.getElementById('current-password').value;
-            const newPassword = document.getElementById('new-password').value;
-            const confirmNewPassword = document.getElementById('confirm-new-password').value;
-            const role = document.getElementById('user-role').value;
-
-            // Password validation
-            if (newPassword !== confirmNewPassword) {
-                errorMessage.style.display = 'block';
-                errorMessage.textContent = 'New passwords do not match.';
-                return;
-            }
-
-            // Check current password (replace with actual backend validation)
-            if (currentPassword !== 'password') {
-                errorMessage.style.display = 'block';
-                errorMessage.textContent = 'Current password is incorrect.';
-                return;
-            }
-
-            // If role is TA, check if skills are added
-            if (role === 'ta' && skillsList.children.length === 0) {
-                errorMessage.style.display = 'block';
-                errorMessage.textContent = 'Please add at least one skill for Teaching Assistants.';
-                return;
-            }
-
-            // Collect skills if TA
-            let skills = [];
-            if (role === 'ta') {
-                skills = Array.from(skillsList.children)
-                    .map(tag => tag.textContent.slice(0, -1).trim());
-            }
-
-            errorMessage.style.display = 'none';
-            alert('Account Updated Successfully!');
-
-            // send the data to your backend
-            // Including the skills array for TAs
-            window.location.href = 'home.html';
-        });
-
-        skillInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                addSkillBtn.click();
-            }
-        });
     </script>
 </body>
 </html>
