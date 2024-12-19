@@ -34,15 +34,18 @@ class Section(models.Model):
 
 class Role(models.Model):
     #role_id = models.IntegerField(primary_key=True)# 0 for Admin, 1 for Supervisor, 2 for Teacher, 3 for TA
+
     role_id = models.CharField(max_length=15, null = True)
     #action_access = models.IntegerField()# each function will have an assigned number
 
-    def __init__(self, role_id, *args, **kwargs):
-        self.role_id = role_id
 
+    def __init__(self, role_id, role_name, action_access):
+        self.role_id = role_id
+        self.role_name = role_name
+        self.action_access = action_access
 
     def __str__(self):
-        return self.role_id
+        return self.role_name
 
 
 class User(models.Model):
@@ -57,6 +60,7 @@ class User(models.Model):
     phone = models.IntegerField(10, null=True)
     role_id = models.CharField(max_length=10, choices = ROLES, default='admin')
     is_active = models.BooleanField(default=False)# not sure how this will work yet
+    skills = models.JSONField(default=list, blank=True)  # Add this field
 
     def __str__(self):
         return self.full_name
@@ -77,7 +81,7 @@ class User(models.Model):
         return True
 
     def change_name(self, full_name):
-        self.full_name = full_name
+        self.full_name
         self.save()
         return True
 
@@ -120,15 +124,14 @@ class courseList(models.Model):
 class RolesList(models.Model):
     role_list = []
 
-    TA = Role(0, "TA")
-    Teacher = Role(1, "Teacher")
-    Admin = Role(2, "Admin")# -1 means all access for simplicity
-    Supervisor = Role(3, "Supervisor")
+    TA = Role(0, "TA", [0])
+    Teacher = Role(1, "Teacher", [1,0])
+    Admin = Role(2, "Admin", [-1])# -1 means all access for simplicity
+    Supervisor = Role(3, "Supervisor", [3,2,1,0])
     role_list.append(TA)
     role_list.append(Teacher)
     role_list.append(Admin)
     role_list.append(Supervisor)
-
 
 class UserList(models.Model):
     user_list = []

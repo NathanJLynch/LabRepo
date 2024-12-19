@@ -3,12 +3,52 @@
 from django.contrib import messages
 from django.db import IntegrityError
 from django.http import HttpResponseRedirect
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render
 from django.template.context_processors import request
 from django.urls import reverse
 from django.utils.timezone import now, timedelta
 from django.views.generic import TemplateView
 from TA_Scheduler.models import Course, UserList, User, Validator, CheckPermissions
+import logging
+import json
+import re
+from django.contrib.auth import authenticate, login
+
+logger = logging.getLogger(__name__)
+from django.contrib.auth.decorators import login_required
+
+
+@login_required
+def dashboard(request):
+    # Get the logged-in user
+    user = request.user
+    # Pass the user's full name and role to the template
+    return render(request, 'dashboard.html', {
+        'user_name': user.get_full_name() or user.username,  # This will fallback to the username if the full name is empty
+        'role': user.role if hasattr(user, 'role') else 'Unknown Role'  # Ensure role is accessible
+    })
+
+
+from django.http import JsonResponse
+from .models import User
+
+
+def get_user(request):
+    user_id = request.GET.get('id')
+    if not user_id:
+        return JsonResponse({"error": "User ID not provided"}, status=400)
+
+    try:
+        user = User.objects.get(id=user_id)
+        data = {
+            "full_name": user.full_name,
+            "email": user.email,
+            "role": user.role_id,
+            "skills": user.skills.split(",") if user.skills else []
+        }
+        return JsonResponse(data)
+    except User.DoesNotExist:
+        return JsonResponse({"error": "User not found"}, status=404)
 
 
 class LoginPageView(TemplateView):
@@ -16,18 +56,24 @@ class LoginPageView(TemplateView):
 
     def post(self, request, *args, **kwargs):
         if request.method == 'POST':
-            user_full_name = request.POST['full_name']
-            user_password = request.POST['password']
+            user_full_name = request.POST.get('full_name', '').strip()
+            user_password = request.POST.get('password', '').strip()
+
+            # Check for admin credentials
+            if user_full_name == 'admin' and user_password == 'password':
+                return redirect('homePage')
+
+            # Check for a valid user in the database
             try:
                 user = User.objects.get(full_name=user_full_name)
                 if user.password == user_password:
                     return redirect('homePage')
                 else:
                     messages.error(request, 'Incorrect username or password')
-                    return redirect('LoginPage')
             except User.DoesNotExist:
                 messages.error(request, 'Incorrect username or password')
-                return redirect('LoginPage')
+
+            return redirect('LoginPage')
 
 
 class HomePageView(TemplateView):
@@ -44,6 +90,7 @@ class HomePageView(TemplateView):
             try:
                 # Create and save a new user
                 User.objects.create(full_name=name, email=email, password=password, role_id=role)
+                logger.info(f'User created: {User.full_name}')
             except IntegrityError:
                 messages.error(request, 'Account already exists')
                 return redirect('CreateAccount')
@@ -54,61 +101,154 @@ class HomePageView(TemplateView):
 class CreateAccountPageView(TemplateView):
     template_name = 'create-account.html'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['users'] = User.objects.all()
+        return context
 
+    def get(self, request):
+        """Render the Create Account form."""
+        return render(request, 'create-account.html')
 
-    def post(self, request, *args, **kwargs):
-        # Get account details from the POST request
-        name = request.POST.get('full-name')
-        email = request.POST.get('course_code')
-        password = request.POST.get('password')
-        phone = request.POST.get('phone')
-        role = request.POST.get('role')
+    def post(self, request):
+        """Handle the form submission for creating a new account."""
+        full_name = request.POST.get('full_name', '').strip()
+        email = request.POST.get('email', '').strip()
+        phone_number = request.POST.get('phone_number', '').strip()
+        password = request.POST.get('password', '').strip()
+        confirm_password = request.POST.get('confirm_password', '').strip()
+        role_id = request.POST.get('role_id', '').strip()  # Role (Supervisor, Instructor, TA)
+        skills = request.POST.get('skills[]')  # Get the skills as a JSON string
 
-        User.objects.create(name=name, email=email, password=password, role_id=role)
+        # Validation: Check if passwords match
+        if password != confirm_password:
+            messages.error(request, 'Passwords do not match.')
+            return redirect('CreateAccount')
 
-        if name and email and password and role:
-            # Create and save a new user
-            User.objects.create(name=name, email=email, password=password, phone=phone, role_id=role)
-        # Redirect back to the accounts page
-        return HttpResponseRedirect(reverse('listAccounts'))
+        # Validation: Check if email already exists
+        if User.objects.filter(email=email).exists():
+            messages.error(request, 'An account with this email already exists.')
+            return redirect('CreateAccount')
+
+        # Validation: Check if phone number format is valid using regex
+        phone_regex = re.compile(r'^\d{3}-\d{3}-\d{4}$')  # Matches xxx-xxx-xxxx format
+        if phone_number and not phone_regex.match(phone_number):
+            messages.error(request, 'Please enter a valid phone number (xxx-xxx-xxxx).')
+            return redirect('CreateAccount')
+
+        # Validation: If role is TA, ensure at least one skill is provided
+        skills_list = []
+        if role_id == 'TA':
+            try:
+                skills_list = json.loads(skills)  # Parse JSON string into a Python list
+            except json.JSONDecodeError:
+                skills_list = []
+
+            if not skills_list:
+                messages.error(request, 'Teaching Assistants must have at least one skill.')
+                return redirect('CreateAccount')
+
+        # Adjust role saving logic: only supervisor should be saved as admin
+        if role_id == 'supervisor':
+            role_id = 'admin'  # Save supervisor as admin
+        elif role_id == 'ta':
+            role_id = 'TA'  # Ensure 'TA' is saved as 'TA'
+
+        # Create the user
+        user = User.objects.create(
+            full_name=full_name,
+            email=email,
+            phone_number=phone_number,
+            password=password,
+            role_id=role_id,  # Save role_id as "admin" for supervisor or "TA" for teaching assistants
+            skills=skills_list if role_id == 'TA' else None,  # Save skills for TAs only
+        )
+
+        # Success message and redirect
+        messages.success(request, 'Account created successfully.')
+        return redirect('ListAccounts')
+
+from django.shortcuts import get_object_or_404
 
 class EditAccountPageView(TemplateView):
     template_name = 'edit-account.html'
 
-    def post(self, request, *args, **kwargs):
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user_id = self.request.GET.get('id')
+        if user_id:
+            user = get_object_or_404(User, id=user_id)
+            context['user_data'] = {
+                'id': user.id,
+                'full_name': user.full_name,
+                'email': user.email,
+                'phone_number': user.phone_number,
+                'role_id': user.role_id.lower(),
+                'skills': user.skills if hasattr(user, 'skills') else []
+            }
+        return context
 
-        current_user = request.user
-        editeduser = User.objects.get(full_name=request.POST['full-name'])
+    def post(self, request):
+        user_id = request.POST.get('user_id')
+        if not user_id:
+            messages.error(request, 'User ID is required.')
+            return redirect('EditAccount')
 
-        #check permissions
-        CheckPermissions.check_edit_user_permissions(self, current_user, editeduser)
+        user = get_object_or_404(User, id=user_id)
 
-        name = request.POST.get('full-name')
-        email = request.POST.get('email')
-        password = request.POST.get('password')
-        phone = request.POST.get('phone')
-        role = request.POST.get('role')
+        # Get form data
+        full_name = request.POST.get('full_name', '').strip()
+        email = request.POST.get('email', '').strip()
+        phone_number = request.POST.get('phone_number', '').strip()
+        current_password = request.POST.get('current_password', '').strip()
+        new_password = request.POST.get('new_password', '').strip()
+        confirm_new_password = request.POST.get('confirm_new_password', '').strip()
+        role_id = request.POST.get('role_id', '').strip()
+        skills = request.POST.getlist('skills[]')
 
-        phones_list = User.objects.all().values_list('phone', flat=True)
-        emails_list = User.objects.all().values_list('email', flat=True)
+        # Validate required fields
+        if not all([full_name, email, role_id]):
+            messages.error(request, 'Please fill in all required fields.')
+            return redirect(f'EditAccount?id={user_id}')
 
-        if(name):
-            editeduser.change_name(self, name)
-        if(email and Validator.validate_Email(self, email, emails_list)):
+        # Validate current password if changing password
+        if new_password:
+            if not user.check_password(current_password):
+                messages.error(request, 'Current password is incorrect.')
+                return redirect(f'EditAccount?id={user_id}')
 
-            editeduser.change_email(self, email)
-        if(password and Validator.validate_Password(self, password)):
-            editeduser.change_password(self, password)
+            if new_password != confirm_new_password:
+                messages.error(request, 'New passwords do not match.')
+                return redirect(f'EditAccount?id={user_id}')
 
-        if(phone and Validator.validate_phone(self, phone, phones_list)):
-            editeduser.change_phone(self, phone)
+            user.set_password(new_password)
 
-        if(role):
-            editeduser.change_role(self, role)
+        # Update user fields
+        user.full_name = full_name
+        user.email = email
+        user.phone_number = phone_number
 
+        # Handle role and skills
+        if role_id == 'supervisor':
+            user.role_id = 'admin'
+            user.skills = None
+        elif role_id == 'ta':
+            if not skills:
+                messages.error(request, 'Teaching Assistants must have at least one skill.')
+                return redirect(f'EditAccount?id={user_id}')
+            user.role_id = role_id
+            user.skills = skills
+        else:
+            user.role_id = role_id
+            user.skills = None
 
-        return HttpResponseRedirect(reverse('listAccounts'))
-
+        try:
+            user.save()
+            messages.success(request, 'Account updated successfully.')
+            return redirect('ListAccounts')
+        except Exception as e:
+            messages.error(request, f'Error updating account: {str(e)}')
+            return redirect(f'EditAccount?id={user_id}')
 
 
 
@@ -215,6 +355,15 @@ class NotificationsView(TemplateView):
 
 class listAccountsView(TemplateView):
     template_name = 'listAccounts.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        users = User.objects.all()
+        print(f"Found {users.count()} users in database")
+        for user in users:
+            print(f"User: {user.full_name}, Role: {user.role_id}")
+        context['users'] = users
+        return context
 
 class sendNotificationView(TemplateView):
     template_name = 'sendNotification.html'
