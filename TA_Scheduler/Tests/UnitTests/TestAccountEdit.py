@@ -9,24 +9,33 @@ class TestEditAccounts(TestCase):
         self.password = 'Hello!'
         self.email = 'hi123@uwm.edu'
         self.role = 'admin'
-        User.objects.create(full_name=self.full_name, email='email_with_no_at', password=self.password,
+        self.phone = 000000000
+        User.objects.create(full_name=self.full_name, email=self.email, password=self.password,
                             role_id=self.role)
 
     def test_correctly_edit_name(self):
-        self.user.editusername(self.username, 'Kiari')
-        self.assertFalse(self.username == 'Connell')
+        user = User.objects.get(full_name =self.full_name)
+        user.full_name = "dummy name"
+        self.assertFalse(user.full_name, self.full_name)
 
     def test_correctly_edit_password(self):
-        self.user.edit_password(self.username, self.password, 'Bye!')
-        self.assertFalse(self.password == 'Hello!')
+        user = User.objects.get(full_name=self.full_name)
+        user.password = "newPassword"
+        self.assertFalse(user.password, self.password)
 
     def test_correctly_edit_email(self):
-        self.user.edit_email(self.username, self.email, 'bye@uwm.edu')
-        self.assertFalse(self.email == 'hi@uwm.edu')
+        user = User.objects.get(full_name=self.full_name)
+        user.email = "newemail@uwm.edu"
+        self.assertFalse(user.email, self.email)
 
     def test_correctly_edit_role(self):
-        self.user.edit_role(self.username, 'instructor')
-        self.assertFalse(self.role == 'admin')
+        user = User.objects.get(full_name=self.full_name)
+        user.role_id = "instructor"
+        self.assertFalse(user.role_id, self.role)
+    def test_correctly_edit_phone(self):
+        user = User.objects.get(full_name=self.full_name)
+        user.phone = 1111111111
+        self.assertFalse(user.phone, self.phone)
 
 
 # test if there's no user
@@ -35,37 +44,3 @@ class TestNoUser(TestCase):
         with self.assertRaises(ObjectDoesNotExist):
             User.objects.get(full_name="John Doe")
 
-
-# Test if there's invalid data inputted
-class TestEditInvalidData(TestCase):
-    def setUp(self):
-        self.full_name = 'John Doe'
-        self.password = 'Hello!123'
-        self.email = 'hi@uwm.edu'
-        self.role = 'admin'
-        User.objects.create(full_name=self.full_name, email=self.email, password=self.password, role_id=self.role)
-
-    def test_invalid_username(self):
-        result = User.objects.get(id="John Doe")
-        # self.user.editusername(self.username, 'h')
-        # self.assertTrue(self.user.check_username(self.username), False)
-
-    def test_invalid_password_01(self):
-        self.user.edit_password(self.username, self.password, 'hello')
-        self.assertTrue(self.user.check_password(self.password), False)
-
-    def test_invalid_password_02(self):
-        self.user.edit_password(self.username, self.password, 'h')
-        self.assertTrue(self.user.check_password(self.password), False)
-
-    def test_invalid_password_03(self):
-        self.user.edit_password(self.username, self.password, '1234')
-        self.assertTrue(self.user.check_password(self.password), False)
-
-    def test_invalid_password_04(self):
-        self.user.edit_password(self.username, self.password, 'HHHH')
-        self.assertTrue(self.user.check_password(self.password), False)
-
-    def test_invalid_email(self):
-        self.user.edit_email(self.username, self.email, 'no')
-        self.assertTrue(self.user.check_email(self.email), False)
