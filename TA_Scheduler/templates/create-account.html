@@ -1,5 +1,3 @@
-<!--test-->
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -94,12 +92,48 @@
             margin-top: 15px;
             display: none;
         }
-        .invalid_message{
-            list-style-type: none;
-            color: #7f1d1d;
-            background: #fecaca;
-            border: 1px solid #fca5a5;
-            margin-top: 15px;
+
+        #skills-container {
+            display: none;
+            margin-bottom: 15px;
+        }
+
+        .skills-input-container {
+            display: flex;
+            margin-bottom: 10px;
+        }
+
+        #skills-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-bottom: 10px;
+        }
+
+        .skill-tag {
+            background: #e5e7eb;
+            color: #1f2937;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .skill-tag-close {
+            margin-left: 5px;
+            cursor: pointer;
+            color: #6b7280;
+        }
+
+        .add-skill-btn {
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            margin-left: 10px;
+            cursor: pointer;
         }
     </style>
 </head>
@@ -107,41 +141,113 @@
     <div class="create-account-container">
         <h1>Create Account</h1>
         <p>Set up a new user account</p>
-        <form id="create-account-form" method = "post">
+        <form id="create-account-form" method="POST" action="{% url 'CreateAccount' %}">
             {% csrf_token %}
-            <input type="text" name = "full-name" id="full-name" class="form-input" placeholder="Full Name" required>
-            <input type="email" name = "email" id="email" class="form-input" placeholder="Email Address" required>
-            <input type="password" name = "password" id="password" class="form-input" placeholder="Password" required>
-            <input type="password" id="confirm-password" class="form-input" placeholder="Confirm Password" required>
-            <select id="user-role" name = "role_id" class="form-select" required>
+            <input type="text" name="full_name" id="full-name" class="form-input" placeholder="Full Name" required>
+            <input type="email" name="email" id="email" class="form-input" placeholder="Email Address" required>
+            <input type="tel" name="phone_number" id="phone-number" class="form-input" placeholder="Phone Number" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" required>
+            <input type="password" name="password" id="password" class="form-input" placeholder="Password" required>
+            <input type="password" name="confirm_password" id="confirm-password" class="form-input" placeholder="Confirm Password" required>
+            <select name="role_id" id="user-role" class="form-select" required>
                 <option value="">Select User Role</option>
                 <option value="supervisor">Supervisor</option>
                 <option value="instructor">Instructor</option>
-                <option value="ta">Teaching Assistant</option>
+                <option value="ta">TA</option>
             </select>
+
+            <!-- Skills input (shown only if role is "TA") -->
+            <div id="skills-container" style="display: none;">
+                <div class="skills-input-container">
+                    <input type="text" id="skill-input" class="form-input" placeholder="Enter a skill">
+                    <button type="button" id="add-skill-btn" class="add-skill-btn">Add</button>
+                </div>
+                <div id="skills-list" class="skills-list"></div>
+                <input type="hidden" name="skills[]" id="skills-hidden" value="">
+            </div>
+
             <button type="submit" class="create-btn">Create Account</button>
         </form>
-        {% if messages %}
-                <div class="messages">
-                    {% for message in messages %}
-                        <div class = invalid_message>
-                            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-                        </div>
-                    {% endfor %}
-                </div>
-            {% endif %}
         <div id="error-message" class="error-message"></div>
-        <a href="homePage" class="cancel-link">Cancel</a>
+        <a href="LoginPage" class="cancel-link">Cancel</a>
     </div>
 
     <script>
         const form = document.getElementById('create-account-form');
         const errorMessage = document.getElementById('error-message');
+        const roleSelect = document.getElementById('user-role');
+        const skillsContainer = document.getElementById('skills-container');
+        const skillInput = document.getElementById('skill-input');
+        const addSkillBtn = document.getElementById('add-skill-btn');
+        const skillsList = document.getElementById('skills-list');
+        const phoneInput = document.getElementById('phone-number');
 
-        form.addEventListener('submit', function(e) {
+        // Phone number formatting
+        phoneInput.addEventListener('input', function(e) {
+            let input = e.target.value.replace(/\D/g, '');
+            input = input.slice(0, 10); // Limit to 10 digits
+            if (input.length > 3) {
+                input = input.slice(0, 3) + '-' + input.slice(3);
+            }
+            if (input.length > 7) {
+                input = input.slice(0, 7) + '-' + input.slice(7);
+            }
+            e.target.value = input;
+        });
+
+        // Toggle skills input based on role selection
+        roleSelect.addEventListener('change', function() {
+            if (this.value === 'ta') {
+                skillsContainer.style.display = 'block';
+            } else {
+                skillsContainer.style.display = 'none';
+                skillsList.innerHTML = ''; // Clear skills if role changes
+            }
+        });
+
+        // Add skill functionality
+        addSkillBtn.addEventListener('click', function() {
+            const skillValue = skillInput.value.trim();
+            if (skillValue && !isDuplicateSkill(skillValue)) {
+                const skillTag = document.createElement('div');
+                skillTag.className = 'skill-tag';
+                const skillText = document.createElement('span');
+                skillText.textContent = skillValue;
+
+                const closeBtn = document.createElement('span');
+                closeBtn.textContent = '×';
+                closeBtn.className = 'skill-tag-close';
+                closeBtn.addEventListener('click', function() {
+                    skillsList.removeChild(skillTag);
+                });
+
+                skillTag.appendChild(skillText);
+                skillTag.appendChild(closeBtn);
+                skillsList.appendChild(skillTag);
+                skillInput.value = ''; // Clear input
+            }
+        });
+
+        // Prevent duplicate skills
+        function isDuplicateSkill(newSkill) {
+            const existingSkills = Array.from(skillsList.children).map(tag => tag.textContent.slice(0, -1).trim());
+            return existingSkills.includes(newSkill);
+        }
+
+        // Handle form submission
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
             const password = document.getElementById('password').value;
             const confirmPassword = document.getElementById('confirm-password').value;
             const role = document.getElementById('user-role').value;
+            const phoneNumber = phoneInput.value;
+
+            // Validate phone number
+            const phoneRegex = /^\d{3}-\d{3}-\d{4}$/;
+            if (!phoneRegex.test(phoneNumber)) {
+                errorMessage.style.display = 'block';
+                errorMessage.textContent = 'Please enter a valid phone number (xxx-xxx-xxxx).';
+                return;
+            }
 
             if (password !== confirmPassword) {
                 errorMessage.style.display = 'block';
@@ -155,9 +261,23 @@
                 return;
             }
 
+            if (role === 'ta' && skillsList.children.length === 0) {
+                errorMessage.style.display = 'block';
+                errorMessage.textContent = 'Please add at least one skill for Teaching Assistants.';
+                return;
+            }
+
+            // Collect skills if TA
+            let skills = [];
+            if (role === 'ta') {
+                skills = Array.from(skillsList.children)
+                    .map(tag => tag.textContent.slice(0, -1).trim());
+            }
+
             errorMessage.style.display = 'none';
-            alert('Account Created Successfully!');
-            window.location.href = 'ListAccounts';
+            document.getElementById('skills-hidden').value = JSON.stringify(skills); // Save skills
+
+            form.submit(); // Submit form after validation
         });
     </script>
 </body>
