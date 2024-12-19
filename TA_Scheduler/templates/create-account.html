@@ -145,7 +145,7 @@
             {% csrf_token %}
             <input type="text" name="full_name" id="full-name" class="form-input" placeholder="Full Name" required>
             <input type="email" name="email" id="email" class="form-input" placeholder="Email Address" required>
-            <input type="tel" name="phone_number" id="phone-number" class="form-input" placeholder="Phone Number" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" required>
+            <input type="tel" name="phone_number" id="phone-number" class="form-input" placeholder="Phone Number"  required>
             <input type="password" name="password" id="password" class="form-input" placeholder="Password" required>
             <input type="password" name="confirm_password" id="confirm-password" class="form-input" placeholder="Confirm Password" required>
             <select name="role_id" id="user-role" class="form-select" required>
@@ -185,12 +185,12 @@
         phoneInput.addEventListener('input', function(e) {
             let input = e.target.value.replace(/\D/g, '');
             input = input.slice(0, 10); // Limit to 10 digits
-            if (input.length > 3) {
-                input = input.slice(0, 3) + '-' + input.slice(3);
-            }
-            if (input.length > 7) {
-                input = input.slice(0, 7) + '-' + input.slice(7);
-            }
+            {#if (input.length > 3) {#}
+            {#    input = input.slice(0, 3) + '-' + input.slice(3);#}
+            {#  }#}
+            {#if (input.length > 7) {#}
+            {#    input = input.slice(0, 7) + '-' + input.slice(7);#}
+            {#  }#}
             e.target.value = input;
         });
 
@@ -241,13 +241,13 @@
             const role = document.getElementById('user-role').value;
             const phoneNumber = phoneInput.value;
 
-            // Validate phone number
-            const phoneRegex = /^\d{3}-\d{3}-\d{4}$/;
-            if (!phoneRegex.test(phoneNumber)) {
-                errorMessage.style.display = 'block';
-                errorMessage.textContent = 'Please enter a valid phone number (xxx-xxx-xxxx).';
-                return;
-            }
+            {#// Validate phone number#}
+            {#const phoneRegex = /^\d{3}-\d{3}-\d{4}$/;#}
+            {#if (!phoneRegex.test(phoneNumber)) {#}
+            {#    errorMessage.style.display = 'block';#}
+            {#    errorMessage.textContent = 'Please enter a valid phone number (xxx-xxx-xxxx).';#}
+            {#    return;#}
+            {# }#}
 
             if (password !== confirmPassword) {
                 errorMessage.style.display = 'block';

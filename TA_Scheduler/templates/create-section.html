@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Section</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #6366f1, #4f46e5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .create-section-container {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            width: 100%;
+            max-width: 800px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+         .section {
+            margin-bottom: 40px;
+        }
+
+        .create-btn {
+            background: #6366f1;
+            color: #fff;
+        }
+
+        .create-btn:hover {
+            background: #4f46e5;
+        }
+
+        .cancel-btn {
+            background: #f3f4f6;
+            color: #1f2937;
+        }
+
+        .cancel-btn:hover {
+            background: #e5e7eb;
+        }
+
+        .error-message {
+            color: #7f1d1d;
+            background: #fecaca;
+            border: 1px solid #fca5a5;
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 15px;
+            display: none;
+        }
+
+        .form-group {
+            text-align: left;
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #1f2937;
+            font-weight: 600;
+        }
+         .schedule-list{
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            margin-top: 20px;
+        }
+
+        .schedule-list th {
+            background: #f3f4f6;
+            color: #1f2937;
+            padding: 15px;
+            text-align: left;
+            border-bottom: 2px solid #e5e7eb;
+        }
+
+        .schedule-list td{
+            padding: 15px;
+            border-bottom: 1px solid #e5e7eb;
+            color: #6b7280;
+        }
+
+    </style>
+</head>
+        <body>
+            <div class="create-section-container">
+                <h1>Create Section for {{ course_name }}</h1>
+                <h3>Course Code: {{ course.course_code }}</h3>
+                <h3>Course Name: {{ course.course_name }}</h3>
+
+                <!-- Section Table -->
+                <table class="schedule-list">
+                    <thead>
+                        <tr>
+                            <th>Number</th>
+                            <th>Type</th>
+                            <th>Start Time</th>
+                            <th>End Time</th>
+                            <th>Days</th>
+                            <th>TA</th>
+                            <th>Instructor</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="schedule-body">
+                        {% for section in sections %}
+                        <tr>
+                            <td>{{ section.number }}</td>
+                            <td>{{ section.type }}</td>
+                            <td>{{ section.start_time }}</td>
+                            <td>{{ section.end_time }}</td>
+                            <td>{{ section.days }}</td>
+                            <td>{{ section.ta }}</td>
+                            <td>{{ section.instructor }}</td>
+                            <td>
+                                <form method="post" action="{% url 'create_section' %}?course_id={{ course.course_id }}">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="delete_section_id" value="{{ section.id }}">
+                                    <button type="submit" class="delete-btn">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="8">No sections available</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+                <!-- Add/Edit Section Form -->
+                <form method="post" action="{% url 'create_section' %}?course_id={{ course.id }}">
+                    {% csrf_token %}
+                    <input type="hidden" name="course_id" value="{{ course.course_id }}">
+
+                    <div class="form-group">
+                        <input id="section-number" name="number" type="text" placeholder="Section Number" required>
+                        <select id="section-type" name="type" required>
+                            <option value="">Select Type</option>
+                            <option value="Lecture">Lecture</option>
+                            <option value="Lab">Lab</option>
+                            <option value="Tutorial">Tutorial</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="start-time">Start Time</label>
+                        <input id="start-time" name="start_time" type="time" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="end-time">End Time</label>
+                        <input id="end-time" name="end_time" type="time" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Days</label>
+                        <label><input type="checkbox" name="days" value="M"> Monday</label>
+                        <label><input type="checkbox" name="days" value="Tu"> Tuesday</label>
+                        <label><input type="checkbox" name="days" value="W"> Wednesday</label>
+                        <label><input type="checkbox" name="days" value="Th"> Thursday</label>
+                        <label><input type="checkbox" name="days" value="F"> Friday</label>
+                    </div>
+
+                    <div class="form-group">
+                        <input id="section-ta" name="ta" type="text" placeholder="TA Name" required>
+                        <select id="section-instructor" name="instructor" required>
+                            <option value="">Select Instructor</option>
+                            <option value="John Doe">John Doe</option>
+                            <option value="Jane Smith">Jane Smith</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="create-btn">Save Section</button>
+                    <button type="button" class="cancel-btn" onclick="window.location.href='/Courses'">Cancel</button>
+                </form>
+            </div>
+        </body>
+</html>
