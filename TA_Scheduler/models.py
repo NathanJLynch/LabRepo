@@ -12,25 +12,6 @@ from django.db import models
 # - SectionList Class may not be needed
 ## End Notes ##
 
-class Section(models.Model):
-#     # (-2 for initialization)
-    section_id = models.IntegerField(primary_key=True) #section number going from 0, each course will start from 0
-#     section_type = models.CharField(max_length=7) #specification of section
-#
-#     def __init__(self, section_id, section_type):
-#         self.section_id = section_id
-#         self.section_type = section_type
-#
-#     def __str__(self):
-#         string = "[({}){}]".format(self.section_id, self.section_type)
-#         return string
-#
-#     def change_SectionType(self, section_type):
-#         self.section_type = section_type
-#         self.save()
-#         return True
-
-
 
 class Role(models.Model):
     #role_id = models.IntegerField(primary_key=True)# 0 for Admin, 1 for Supervisor, 2 for Teacher, 3 for TA
@@ -60,7 +41,7 @@ class User(models.Model):
     phone = models.IntegerField(10, null=True)
     role_id = models.CharField(max_length=10, choices = ROLES, default='admin')
     is_active = models.BooleanField(default=False)# not sure how this will work yet
-    skills = models.JSONField(default=list, blank=True)  # Add this field
+    skills = models.JSONField(default=list, null=True , blank=True)  # Add this field
 
     def __str__(self):
         return self.full_name
@@ -224,40 +205,45 @@ class Validator(models.Model):
         return False
 
 
-
 class Course(models.Model):
     course_id = models.IntegerField(primary_key=True)
     course_name = models.CharField(max_length=50, unique=True)  # name of the course
     course_code = models.CharField(max_length=15, unique=True, null=True)  # course code
     course_sem = models.CharField(max_length=20, null=True)  # course sem
-    course_instructor = models.CharField(max_length=50, null=True) # course instuctor
-    # start_time = models.TimeField(null=True)  # start time of the course
-    # end_time = models.TimeField(null=True)  # end time of the course
-    # days = models.CharField(max_length=50, null=True)
-    # date = models.DateField(null=True)
 
     def __str__(self):
-            return self.course_name
+        return self.course_name
 
-
-    
-    
     def change_CourseCode(self, course_code):
         self.course_code = course_code
         self.save()
         return True
-    
+
     def change_CourseSem(self, course_sem):
         self.course_sem = course_sem
         self.save()
         return True
-    
-    # def change_CourseInstructor(self, course_instructor):
-    #     self.course_instructor = course_instructor
-    #     self.start_time = start_time
-    #     self.end_time = end_time
-    #     self.days = days
-    #     self.date = date
-    #     self.save()
-    #     return True
 
+    def change_CourseInstructor(self, course_instructor):
+        self.course_instructor = course_instructor
+        self.save()
+        return True
+
+
+class Section(models.Model):
+    course = models.ForeignKey('Course', related_name='sections', on_delete=models.CASCADE, null=True, blank=True)
+    id = models.IntegerField(primary_key=True)
+    number = models.IntegerField(null=True)
+    type = models.CharField(max_length=20, choices=[('Lecture', 'Lecture'), ('Lab', 'Lab'), ('Tutorial', 'Tutorial')], null=True)
+    start_time = models.TimeField(null=True)
+    end_time = models.TimeField(null=True)
+    days = models.CharField(max_length=50, null=True)
+    ta = models.CharField(max_length=100, null=True)
+    instructor = models.CharField(max_length=100, null=True)
+    date = models.DateField(null=True)
+
+    def __str__(self):
+        return self.number
+
+    def course_name(self):
+        return self.course.course_name

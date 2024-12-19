@@ -16,12 +16,14 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+
+
 from TA_Scheduler.views import LoginPageView
 from TA_Scheduler.views import HomePageView
 from TA_Scheduler.views import coursesPageView
 from TA_Scheduler.views import CreateAccountPageView
 from TA_Scheduler.views import EditAccountPageView
-from TA_Scheduler.views import CreateCoursePageView, AssignPageView,NotificationsView,listAccountsView,sendNotificationView
+from TA_Scheduler.views import CreateCoursePageView, AssignPageView,NotificationsView,listAccountsView,sendNotificationView,CreateSection
 
 urlpatterns = [
     path('', LoginPageView.as_view(), name='LoginPage'),
@@ -29,6 +31,7 @@ urlpatterns = [
     path('LoginPage', LoginPageView.as_view(), name='LoginPage'),
     path('homePage', HomePageView.as_view(), name='homePage'),
     path('Courses', coursesPageView.as_view(), name='courses'),
+    path('create-section/', CreateSection.as_view(), name='create_section'),
     path('CreateAccount', CreateAccountPageView.as_view(), name='CreateAccount'),
     path('EditAccount', EditAccountPageView.as_view(), name='EditAccount'),
     path('CreateCourse', CreateCoursePageView.as_view(), name='CreateCourse'),
