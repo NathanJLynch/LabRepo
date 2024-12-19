@@ -8,7 +8,8 @@ class TestAccountDeletion(TestCase):
         self.password = 'Hello!123'
         self.email = 'hi@uwm.edu'
         self.role = 'admin'
-        User.objects.create(full_name=self.full_name, email=self.email, password=self.password,
+        self.phone = 0000000000
+        User.objects.create(full_name=self.full_name, email=self.email, password=self.password, phone = self.phone,
                             role_id=self.role)
 
     def test_delete_account(self):

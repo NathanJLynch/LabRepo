@@ -34,8 +34,10 @@ class Section(models.Model):
 
 class Role(models.Model):
     #role_id = models.IntegerField(primary_key=True)# 0 for Admin, 1 for Supervisor, 2 for Teacher, 3 for TA
-    role_name = models.CharField(max_length=15)
-    action_access = models.IntegerField()# each function will have an assigned number
+
+    role_id = models.CharField(max_length=15, null = True)
+    #action_access = models.IntegerField()# each function will have an assigned number
+
 
     def __init__(self, role_id, role_name, action_access):
         self.role_id = role_id
@@ -52,27 +54,16 @@ class User(models.Model):
         ('instructor', 'instructor'),
         ('TA', 'TA')
     )
-    #user_id = models.IntegerField(primary_key=True)
-    #first_name = models.CharField(max_length=15)
-    #last_name = models.CharField(max_length=15)
     full_name = models.CharField(max_length=50, primary_key=True)
-    email = models.CharField(max_length=50)
+    email = models.CharField(max_length=50, unique = True)
     password = models.CharField(max_length=25)
-    phone_number = models.CharField(max_length=15, blank=True, null=True)
+    phone = models.IntegerField(10, null=True)
     role_id = models.CharField(max_length=10, choices = ROLES, default='admin')
     is_active = models.BooleanField(default=False)# not sure how this will work yet
     skills = models.JSONField(default=list, blank=True)  # Add this field
 
     def __str__(self):
         return self.full_name
-    # def __init__(self, full_name, email, password, role_id, *args, **kwargs):
-    #     super().__init__(*args, **kwargs)
-    #     self.full_name = full_name
-    #     self.email = email
-    #     self.password = password
-    #     #self.phone_number = phone_number
-    #     self.role_id = role_id
-    #     self.is_active = False
 
     def change_email(self, new_email):
         self.email = new_email
@@ -109,17 +100,7 @@ class User(models.Model):
 # Data Structure Classes
 class SectionList(models.Model):
     section_list = []
-#
-#     def add_Section(self, section):
-#         self.section_list.append(section)
-#         self.save()
-#         return True
-#
-#     def remove_Section(self, section):
-#         self.section_list.remove(section)
-#         self.save()
-#         return True
-#
+
 class courseList(models.Model):
         course_list = []
 #     TestS = Section(0, "Lecture")
@@ -151,10 +132,6 @@ class RolesList(models.Model):
     role_list.append(Teacher)
     role_list.append(Admin)
     role_list.append(Supervisor)
-    print(role_list)
-
-    def get_RoleName(self, role_id):
-        return self.role_list[role_id].role_name
 
 class UserList(models.Model):
     user_list = []
@@ -254,10 +231,10 @@ class Course(models.Model):
     course_code = models.CharField(max_length=15, unique=True, null=True)  # course code
     course_sem = models.CharField(max_length=20, null=True)  # course sem
     course_instructor = models.CharField(max_length=50, null=True) # course instuctor
-    start_time = models.TimeField(null=True)  # start time of the course
-    end_time = models.TimeField(null=True)  # end time of the course
-    days = models.CharField(max_length=50, null=True)
-    date = models.DateField(null=True)
+    # start_time = models.TimeField(null=True)  # start time of the course
+    # end_time = models.TimeField(null=True)  # end time of the course
+    # days = models.CharField(max_length=50, null=True)
+    # date = models.DateField(null=True)
 
     def __str__(self):
             return self.course_name
@@ -275,12 +252,12 @@ class Course(models.Model):
         self.save()
         return True
     
-    def change_CourseInstructor(self, course_instructor):
-        self.course_instructor = course_instructor
-        self.start_time = start_time
-        self.end_time = end_time
-        self.days = days
-        self.date = date
-        self.save()
-        return True
+    # def change_CourseInstructor(self, course_instructor):
+    #     self.course_instructor = course_instructor
+    #     self.start_time = start_time
+    #     self.end_time = end_time
+    #     self.days = days
+    #     self.date = date
+    #     self.save()
+    #     return True
 
